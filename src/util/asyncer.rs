@@ -1,13 +1,11 @@
 use async_std::io::ReadExt;
 
 async fn main_async() {
-  let tasks = [
-    async_std::task::spawn(read_file("/dev/random", "one")),
-    async_std::task::spawn(read_file("/dev/random", "two")),
-  ];
-  for t in tasks {
-      t.await;
-  }
+  let task1 = 
+    async_std::task::spawn(read_file("/dev/random", "one"));
+  let task2 = async_std::task::spawn(read_file("/dev/random", "two"));
+  
+  futures::join!(task1, task2);
 }
 
 async fn read_file(path : &str, diff : &str) {
