@@ -1,12 +1,10 @@
-use std::io::Error;
-
 use async_std::io::ReadExt;
 
 async fn main_async() -> (){
-  let task1 = 
+  let task1 =
     async_std::task::spawn(read_file("/dev/random", "one"));
   let task2 = async_std::task::spawn(read_file("/dev/random", "two"));
-  
+
   let (r0, r1) = futures::join!(task1, task2);
   r0.and(r1).expect("expected results");
 }

@@ -14,7 +14,7 @@ struct LoopMultipler{}
 impl Multiplier for LoopMultipler {
   fn multiply(&self, a : i32 ,b :i32) -> i32 {
       let mut result = 0;
-      for i in 0..b {
+      for _ in 0..b {
         result += a;
       }
       result
@@ -26,7 +26,7 @@ enum MultiplierType {
 }
 
 fn make_multiplier(t : MultiplierType) -> &'static dyn Multiplier {
-  let m : &dyn Multiplier = match (t) {
+  let m : &dyn Multiplier = match t {
     MultiplierType::Simple => &SimpleMultipler{},
     MultiplierType::Loop => &LoopMultipler{},
   };
