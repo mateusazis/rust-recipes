@@ -8,14 +8,16 @@ trait SummerIFace{
   fn sum(&self) -> i32;
 }
 
-struct Summer {
-  values : [Option<Box<dyn Number>>; 3],
+const ARRAY_SIZE : usize = 100;
+
+struct Summer<'a> {
+  values : [Option<&'a dyn Number>; ARRAY_SIZE],
   count : usize,
 }
 
-impl Summer {
-  fn new()  -> Summer {
-    Summer{values: [None, None, None], count: 0}
+impl <'a>  Summer<'a> {
+  fn new()  -> Summer<'a> {
+    Summer{values: [None; ARRAY_SIZE], count: 0}
   }
 }
 
@@ -26,8 +28,8 @@ impl <T: ?Sized + Number> Number for Box<T> {
   }
 }
 
-impl SummerIFace for Summer {
-  type T = Box<dyn Number>;
+impl<'a>  SummerIFace for Summer<'a>  {
+  type T = &'a dyn Number;
 
   fn add(&mut self, value : Self::T) {
     self.values[self.count] = Some(value);
@@ -38,8 +40,8 @@ impl SummerIFace for Summer {
     let mut result = 0;
     let values = &self.values;
     for value in values {
-      if let Some(boxedValue) = value {
-        result += boxedValue.get_value()
+      if let Some(boxed_value) = value {
+        result += boxed_value.get_value()
       }
     }
     result
@@ -98,10 +100,10 @@ pub fn main() {
   let mut summer  = Summer::new();
 
   // summer.add(Direct(10));
-  let x = Box::new(Direct(10));
-  summer.add(x);
-  summer.add(Box::new(Direct(20)));
-  summer.add(Box::new(Half(4)));
+  // let x = Box::new();
+  summer.add(&Direct(10));
+  summer.add(&Direct(20));
+  summer.add(&Half(4));
   // summer.add(&Direct(30));
   // summer.add(&Half(14));
 
