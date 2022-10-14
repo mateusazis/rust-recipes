@@ -46,32 +46,6 @@ impl<'a>  SummerIFace for Summer<'a>  {
     }
     result
   }
-
-// struct Summer<T> {
-//   values : [Option<Box<T>>; 100],
-//   count : usize,
-// }
-
-// impl <'a, T> Summer <T> where T : Number{
-//   fn new()  -> Summer<T> {
-//     Summer{values: [None; 100], count: 0}
-//   }
-
-//   fn add(&mut self, value : Box<T>) {
-//     self.values[self.count] = Some(value);
-//     self.count += 1;
-//   }
-
-//   fn sum(&self) -> i32 {
-//     let mut result = 0;
-//     let values = &self.values;
-//     for value in values {
-//       if let Some(boxedValue) = value {
-//         result += boxedValue.get_value()
-//       }
-//     }
-//     result
-//   }
 }
 
 trait Number {
@@ -94,18 +68,12 @@ impl Number for Half {
   }
 }
 
-
 pub fn main() {
-  // let mut summer : Summer<Box<dyn Number>> = Summer::new();
   let mut summer  = Summer::new();
 
-  // summer.add(Direct(10));
-  // let x = Box::new();
   summer.add(&Direct(10));
   summer.add(&Direct(20));
   summer.add(&Half(4));
-  // summer.add(&Direct(30));
-  // summer.add(&Half(14));
 
   println!("The sum is {}", summer.sum())
 }
