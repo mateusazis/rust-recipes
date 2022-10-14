@@ -1,6 +1,6 @@
 use async_std::io::ReadExt;
 
-async fn main_async() -> (){
+async fn main_async() {
   let task1 =
     async_std::task::spawn(read_file("/dev/random", "one"));
   let task2 = async_std::task::spawn(read_file("/dev/random", "two"));
@@ -16,7 +16,7 @@ async fn read_file(path : &str, diff : &str) -> Result<(), async_std::io::Error>
   while reader.read(&mut buf).await? > 0 {
     println!("[{}] From file {}: {}", diff, path, buf[0]);
   }
-  return Ok(())
+  Ok(())
 }
 
 pub fn main() {

@@ -18,7 +18,7 @@ fn run_loop(m : &impl Multiplier) {
   for i in 0..10 {
     println!("{} when multiplied is {}", i, multiply(i, m))
   }
-  println!("")
+  println!()
 }
 
 pub fn interfaces_main()  {

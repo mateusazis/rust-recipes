@@ -33,11 +33,11 @@ fn make_multiplier(t : MultiplierType) -> &'static dyn Multiplier {
   m
 }
 
-fn multiply<'a>(a : i32, b : i32, multiplier : &'a dyn Multiplier) -> (i32, &'a dyn Multiplier) {
+fn multiply(a : i32, b : i32, multiplier : &dyn Multiplier) -> (i32, &dyn Multiplier) {
   (multiplier.multiply(a, b), multiplier)
 }
 
-fn multiply_knowing_the_type<'a>(a : i32, b : i32, multiplier : &'a impl Multiplier) -> (i32, &'a impl Multiplier) {
+fn multiply_knowing_the_type(a : i32, b : i32, multiplier : &impl Multiplier) -> (i32, &impl Multiplier) {
   (multiplier.multiply(a, b), multiplier)
 }
 

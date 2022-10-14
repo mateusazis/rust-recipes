@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub mod interfaces;
 pub mod math;
 pub mod asyncer;

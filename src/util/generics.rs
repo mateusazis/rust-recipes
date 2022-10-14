@@ -3,7 +3,7 @@ use std::ops::Deref;
 trait SummerIFace{
   type T;
 
-  fn add(&mut self, value : Self::T);
+  fn add(&mut self, number : Self::T);
 
   fn sum(&self) -> i32;
 }
@@ -11,38 +11,36 @@ trait SummerIFace{
 const ARRAY_SIZE : usize = 100;
 
 struct Summer<'a> {
-  values : [Option<&'a dyn Number>; ARRAY_SIZE],
+  numbers : [Option<&'a dyn Number>; ARRAY_SIZE],
   count : usize,
 }
 
 impl <'a>  Summer<'a> {
   fn new()  -> Summer<'a> {
-    Summer{values: [None; ARRAY_SIZE], count: 0}
+    Summer{numbers: [None; ARRAY_SIZE], count: 0}
   }
 }
 
 impl <T: ?Sized + Number> Number for Box<T> {
   fn get_value(&self) -> i32 {
       let x = self.deref();
-      return x.get_value();
+      x.get_value()
   }
 }
 
 impl<'a>  SummerIFace for Summer<'a>  {
   type T = &'a dyn Number;
 
-  fn add(&mut self, value : Self::T) {
-    self.values[self.count] = Some(value);
+  fn add(&mut self, number : Self::T) {
+    self.numbers[self.count] = Some(number);
     self.count += 1;
   }
 
   fn sum(&self) -> i32 {
     let mut result = 0;
-    let values = &self.values;
-    for value in values {
-      if let Some(boxed_value) = value {
-        result += boxed_value.get_value()
-      }
+    let values = &self.numbers;
+    for number in values.iter().flatten() {
+      result += number.get_value()
     }
     result
   }
