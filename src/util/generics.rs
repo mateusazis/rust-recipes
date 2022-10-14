@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 trait SummerIFace{
   type T;
 
@@ -7,20 +9,20 @@ trait SummerIFace{
 }
 
 struct Summer {
-  values : [Option<Box<dyn Number>>; 100],
+  values : [Option<Box<dyn Number>>; 3],
   count : usize,
 }
 
 impl Summer {
   fn new()  -> Summer {
-    const opt = None;
-    Summer{values: [opt; 100], count: 0}
+    Summer{values: [None, None, None], count: 0}
   }
 }
 
-impl <T: ?Sized> Number for Box<T> {
+impl <T: ?Sized + Number> Number for Box<T> {
   fn get_value(&self) -> i32 {
-      self.get_value()
+      let x = self.deref();
+      return x.get_value();
   }
 }
 
@@ -98,8 +100,8 @@ pub fn main() {
   // summer.add(Direct(10));
   let x = Box::new(Direct(10));
   summer.add(x);
-  // summer.add(&Direct(20));
-  // summer.add(&Half(4));
+  summer.add(Box::new(Direct(20)));
+  summer.add(Box::new(Half(4)));
   // summer.add(&Direct(30));
   // summer.add(&Half(14));
 
