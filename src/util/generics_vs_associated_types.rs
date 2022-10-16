@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 trait Iterator<'a, T> {
 
     fn next(&mut self) -> Option<T>;
@@ -38,15 +40,17 @@ impl <'a> Iterator<'a, String> for Range<'a, String> {
     }
 }
 
+fn iterate<T>(it : &mut dyn Iterator<T>) where T: Debug {
+    while let Some(v) = it.next() {
+        println!("Value: {:?}", v);
+    }
+}
+
 pub fn main() {
     let mut range = Range(&[&15, &19, &22]);
-    while let Some(v) = range.next() {
-        println!("Value: {}", v);
-    }
+    iterate(&mut range);
 
     let b = [&String::from("abacaxi"), &String::from("morango"), &String::from("uva")];
     let mut words = Range(&b[0..b.len()]);
-    while let Some(v) = words.next() {
-        println!("Word: {}", v);
-    }
+    iterate( &mut words);
 }
