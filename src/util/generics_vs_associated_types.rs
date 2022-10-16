@@ -5,7 +5,7 @@ trait Iterator<'a, T> {
 
 struct Range<'a, T>(&'a[&'a T]);
 
-// Trait can be implemented multiple times for the smae struct
+// With generics, traits can be implemented multiple times for the smae struct
 impl <'a> Iterator<'a, i32> for Range<'a, i32> {
 
     fn next(&mut self) -> Option<i32> {
@@ -19,7 +19,7 @@ impl <'a> Iterator<'a, i32> for Range<'a, i32> {
     }
 }
 
-// Trait can be implemented multiple times for the smae struct
+// With generics, traits can be implemented multiple times for the smae struct
 impl <'a> Iterator<'a, String> for Range<'a, String> {
 
     fn next(&mut self) -> Option<String> {
