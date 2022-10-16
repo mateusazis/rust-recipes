@@ -8,16 +8,14 @@ trait SummerIFace{
   fn sum(&self) -> i32;
 }
 
-const ARRAY_SIZE : usize = 100;
-
-struct Summer<'a> {
-  numbers : [Option<&'a dyn Number>; ARRAY_SIZE],
+struct Summer<'a, const CAPACITY : usize> {
+  numbers : [Option<&'a dyn Number>; CAPACITY],
   count : usize,
 }
 
-impl <'a>  Summer<'a> {
-  fn new()  -> Summer<'a> {
-    Summer{numbers: [None; ARRAY_SIZE], count: 0}
+impl <'a, const CAPACITY : usize>  Summer<'a, CAPACITY> {
+  fn new()  -> Summer<'a, CAPACITY> {
+    Summer{numbers: [None; CAPACITY], count: 0}
   }
 }
 
@@ -28,7 +26,7 @@ impl <T: ?Sized + Number> Number for Box<T> {
   }
 }
 
-impl<'a>  SummerIFace for Summer<'a>  {
+impl<'a, const CAPACITY : usize>  SummerIFace for Summer<'a, CAPACITY>  {
   type T = &'a dyn Number;
 
   fn add(&mut self, number : Self::T) {
@@ -67,7 +65,7 @@ impl Number for Half {
 }
 
 pub fn main() {
-  let mut summer  = Summer::new();
+  let mut summer : Summer<100>  = Summer::new();
 
   summer.add(&Direct(10));
   summer.add(&Direct(20));
