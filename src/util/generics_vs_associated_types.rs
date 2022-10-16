@@ -40,17 +40,17 @@ impl <'a> Iterator<'a, String> for Range<'a, String> {
     }
 }
 
-fn iterate<T>(it : &mut dyn Iterator<T>) where T: Debug {
+fn iterate<'a, T>(mut it : impl Iterator<'a, T>) where T: Debug {
     while let Some(v) = it.next() {
         println!("Value: {:?}", v);
     }
 }
 
 pub fn main() {
-    let mut range = Range(&[&15, &19, &22]);
-    iterate(&mut range);
+    let range = Range(&[&15, &19, &22]);
+    iterate(range);
 
     let b = [&String::from("abacaxi"), &String::from("morango"), &String::from("uva")];
-    let mut words = Range(&b[0..b.len()]);
-    iterate( &mut words);
+    let words = Range(&b[0..b.len()]);
+    iterate( words);
 }
