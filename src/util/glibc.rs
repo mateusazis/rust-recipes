@@ -3,7 +3,7 @@ use std::process::exit;
 pub fn main() {
   unsafe {
     libc::printf(
-      "Parent: My pid is %d and my parent is %d\n".as_ptr() as *const i8,
+      "Parent: My pid is %d and my parent is %d\n\0".as_ptr() as *const i8,
       libc::getpid(), libc::getppid());
     let child_pid = libc::fork();
     match child_pid {
@@ -18,7 +18,7 @@ pub fn main() {
         let mut result : i32 = 0;
         let ptr : *mut i32 = &mut result as *mut i32;
         libc::waitpid(child_pid, ptr, 0);
-        println!("Parent {} : child {} exited with code {}", libc::getpid(), child_pid, libc::WEXITSTATUS(result));
+        println!("Parent {}: child {} exited with code {}", libc::getpid(), child_pid, libc::WEXITSTATUS(result));
       },
     };
   };
