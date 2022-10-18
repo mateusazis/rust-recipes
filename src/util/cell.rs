@@ -10,6 +10,10 @@ impl Incrementer {
     let old_value = self.value.get();
     self.value.set(old_value+inc);
   }
+
+  fn print(&self) {
+    println!("Value at Incrementer: {}", self.value.get())
+  }
 }
 
 struct Multiplier{
@@ -20,6 +24,10 @@ impl Multiplier {
   fn mult(&self, multiplier : i32){
     let old_value = self.value.get();
     self.value.set(old_value*multiplier);
+  }
+
+  fn print(&self) {
+    println!("Value at Multiplier: {}", self.value.get())
   }
 }
 
@@ -32,4 +40,6 @@ pub fn main() {
   mult.mult(5);
 
   println!("Final value: {}", value.get());
+  inc.print();
+  mult.print();
 }
