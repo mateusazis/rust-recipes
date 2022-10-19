@@ -9,3 +9,4 @@ pub mod generics;
 pub mod associated_types;
 pub mod generics_vs_associated_types;
 pub mod cell;
+pub mod threading;
