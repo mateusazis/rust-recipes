@@ -2,7 +2,7 @@
 extern "C" {
   #endif
 
-void toUpper(char* input);
+int toUpper(char* input);
 
 #ifdef __cplusplus
 }

@@ -1,2 +1,2 @@
-libmylib.so:
-	clang --shared mylib.c -o$@
+libmylib.so: mylib.c
+	clang --shared $^ -o$@
