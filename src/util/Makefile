@@ -1,2 +1,2 @@
-mylib:
-	clang --shared mylib.c -omylib.dyn
+libmylib.so:
+	clang --shared mylib.c -o$@
