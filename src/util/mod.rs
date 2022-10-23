@@ -11,3 +11,4 @@ pub mod generics_vs_associated_types;
 pub mod cell;
 pub mod threading;
 pub mod ffi;
+pub mod inline_assembly;
