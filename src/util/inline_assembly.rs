@@ -33,6 +33,8 @@ fn sum(a : i32, b : i32) -> i32 {
 fn array_multiply(numbers: &mut [i32], multiplier: i32) {
   for i in 0..numbers.len() {
     unsafe {
+      let mut i2 = (i * 4) as u64;
+      let ptr_base = numbers.as_mut_ptr();
       let ptr = numbers.as_mut_ptr().offset(i as isize);
       #[cfg(target_arch="aarch64")]
       asm!(
@@ -45,15 +47,22 @@ fn array_multiply(numbers: &mut [i32], multiplier: i32) {
         in(reg) multiplier,
       );
 
+      let mut tmp = 0i32;
       #[cfg(target_arch="x86_64")]
+      // working:
       // order: DEST, SRC
+      println!("pointer addr: {:?}", ptr_base as u64);
       asm!(
-        "mov edx, [{0}]",
-        "imul edx, {1:e}",
-        "mov [{0}], edx",
-        in(reg) ptr,
+        "add {2}, {0}",
+        "mov {3:e}, [{2}]",
+        "imul {3:e}, {1:e}",
+        "mov [{2}], {3:e}",
+        in(reg) ptr_base,
         in(reg) multiplier,
+        inout(reg) i2,
+        out(reg) tmp,
       );
+      println!("value of i2: {}, tmp: {}\n", i2, tmp);
     }
   }
 }
