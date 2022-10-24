@@ -1,10 +1,11 @@
 use std::arch::asm;
 
 fn sum(a : i32, b : i32) -> i32 {
-  let mut result : i32;
+  let result : i32;
 
   // Using Mac's aarch64 instruction set.
   // See: https://developer.arm.com/documentation/102374/0100/Overview
+  #[cfg(target_arch="aarch64")]
   unsafe {
     asm!("mov w0, {1:w}",
       "mov w1, {2:w}",
@@ -15,11 +16,22 @@ fn sum(a : i32, b : i32) -> i32 {
       in(reg) b,
     );
   }
+
+  #[cfg(target_arch="x86_64")]
+  unsafe {
+    asm!(
+      "mov {0:e}, {1:e}",
+      "add {0:e}, {2:e}",
+      out(reg) result,
+      in(reg) a,
+      in(reg) b,
+    );
+  }
   result
 }
 
 fn array_multiply(numbers: &mut [i32], multiplier: i32) {
-  // for i in 0..numbers.len() {
+  for i in 0..numbers.len() {
     unsafe {
       let ptr = numbers.as_ptr();
       asm!(
@@ -32,7 +44,7 @@ fn array_multiply(numbers: &mut [i32], multiplier: i32) {
         in(reg) multiplier,
       );
     }
-  // }
+  }
 }
 
 

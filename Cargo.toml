@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 build = "build.rs"
 
-[features]
-array_into_raw_parts = true
+#[features]
+#array_into_raw_parts = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
