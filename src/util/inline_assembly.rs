@@ -36,23 +36,18 @@ fn array_multiply(numbers: &mut [i32], multiplier: i32) {
     unsafe {
       let offset = (i * std::mem::size_of::<i32>()) as u64;
 
-      let mut temp = 0i32;
-
       #[cfg(target_arch="aarch64")]
+      // working:
+      // order: DEST, OPERAND1, OPERAND2
       asm!(
-        "mov x0, {0:x}",
-        "add x0, x0, {1:x}",
-        "ldr {3:w}, [x0]",
-        "mov w1, {2:w}",
-        "mul {3:w}, {3:w}, w1",
-        "str {3:w}, [x0]",
+        "add x0, {0:x}, {1:x}",
+        "ldr w30, [x0]",
+        "mul w30, w30, {2:w}",
+        "str w30, [x0]",
         in(reg) ptr_base,
         in(reg) offset,
         in(reg) multiplier,
-        inout(reg) temp,
       );
-
-      println!("Temp ended as: {}", temp);
 
       #[cfg(target_arch="x86_64")]
       // working:
