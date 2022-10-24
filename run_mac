@@ -1,4 +1,4 @@
 #! /bin/bash
 
 export DYLD_FALLBACK_LIBRARY_PATH=./src/util
-cargo run
+cargo run $@

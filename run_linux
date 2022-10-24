@@ -1,4 +1,4 @@
 #! /bin/bash
 
 LD_LIBRARY_PATH=./src/util
-cargo run
+cargo run $@
