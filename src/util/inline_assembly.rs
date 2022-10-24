@@ -44,19 +44,16 @@ fn array_multiply(numbers: &mut [i32], multiplier: i32) {
         in(reg) ptr,
         in(reg) multiplier,
       );
-      let mut tmp : i32 = 99;
 
       #[cfg(target_arch="x86_64")]
       // order: DEST, SRC
       asm!(
-        "mov {2:e}, [{0}]",
-        "imul {2:e}, {1:e}",
-        "mov [{0}], {2:e}",
+        "mov edx, [{0}]",
+        "imul edx, {1:e}",
+        "mov [{0}], edx",
         in(reg) ptr,
         in(reg) multiplier,
-        inout(reg) tmp,
       );
-      println!("Tmp ended as: {}", tmp); 
     }
   }
 }
