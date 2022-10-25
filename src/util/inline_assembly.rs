@@ -93,9 +93,9 @@ fn exit(code : i32) {
     // exit via syscall
     #[cfg(target_arch="x86_64")]
     asm!(
-      "mov eax, 1",
-      "mov ebx, {0:e}",
-      "int 0x80",
+      "mov rax, 60",
+      "mov rdi, {0:r}",
+      "syscall",
       in(reg) code,
     );
   }
