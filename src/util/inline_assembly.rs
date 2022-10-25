@@ -69,7 +69,7 @@ fn write_via_syscall(mut message : String) {
   unsafe {
     let ptr = message.as_mut_str().as_mut_ptr();
     let len = message.len();
-    let mut out = 44i32;
+    let mut out :i32;
 
     #[cfg(target_arch="x86_64")]
     asm!(
@@ -83,6 +83,7 @@ fn write_via_syscall(mut message : String) {
       out(reg) out,
       in(reg) len,
     );
+    
     let r = libc::strerror(-out);
     libc::printf(r);
   }
@@ -101,6 +102,29 @@ fn exit(code : i32) {
   }
 }
 
+fn get_pid() {
+  let my_pid = syscall0(39);
+  println!("My pid is {}", my_pid);
+}
+
+fn syscall0(number : i32) -> i32 {
+  let mut ret : i32;
+
+  unsafe {
+    #[cfg(target_arch="x86_64")]
+    asm!(
+      "mov rax, {0:r}",
+      "syscall",
+      "mov {1:r}, rax",
+      in(reg) number,
+      out(reg) ret,
+    );
+  }
+
+  ret
+}
+
+
 pub fn main() {
   let a = 9;
   let b = 4;
@@ -112,7 +136,9 @@ pub fn main() {
   array_multiply(&mut my_array[0..len], 3);
   println!("After multiplication: {:?}" , my_array);
 
+  get_pid();
   write_via_syscall(String::from("hello world\n"));
+
   // std::thread::sleep(std::time::Duration::from_secs(60));
   exit(37);
 }
