@@ -65,6 +65,18 @@ fn array_multiply(numbers: &mut [i32], multiplier: i32) {
   }
 }
 
+fn exit(code : i32) {
+  unsafe {
+    // exit via syscall
+    #[cfg(target_arch="x86_64")]
+    asm!(
+      "mov eax, 1",
+      "mov ebx, {0:e}",
+      "int 0x80",
+      in(reg) code,
+    );
+  }
+}
 
 pub fn main() {
   let a = 9;
@@ -76,4 +88,5 @@ pub fn main() {
   let len = my_array.len();
   array_multiply(&mut my_array[0..len], 3);
   println!("After multiplication: {:?}" , my_array);
+  exit(37);
 }
