@@ -65,6 +65,29 @@ fn array_multiply(numbers: &mut [i32], multiplier: i32) {
   }
 }
 
+fn write_via_syscall(mut message : String) {
+  unsafe {
+    let ptr = message.as_mut_str().as_mut_ptr();
+    let len = message.len();
+    let mut out = 44i32;
+
+    #[cfg(target_arch="x86_64")]
+    asm!(
+      "mov rax, 1",
+      "mov rdi, 1",
+      "mov rsi, {0:r}",
+      "mov rdx, {2:r}",
+      "syscall",
+      "mov {1:r}, rax",
+      in(reg) ptr,
+      out(reg) out,
+      in(reg) len,
+    );
+    let r = libc::strerror(-out);
+    libc::printf(r);
+  }
+}
+
 fn exit(code : i32) {
   unsafe {
     // exit via syscall
@@ -88,5 +111,8 @@ pub fn main() {
   let len = my_array.len();
   array_multiply(&mut my_array[0..len], 3);
   println!("After multiplication: {:?}" , my_array);
+
+  write_via_syscall(String::from("hello world\n"));
+  // std::thread::sleep(std::time::Duration::from_secs(60));
   exit(37);
 }
