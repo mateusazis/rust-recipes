@@ -66,12 +66,12 @@ fn array_multiply(numbers: &mut [i32], multiplier: i32) {
 }
 
 fn write_via_syscall(mut message : String) {
+  #[cfg(target_arch="x86_64")]
   unsafe {
     let ptr = message.as_mut_str().as_mut_ptr();
     let len = message.len();
     let mut out :i32;
 
-    #[cfg(target_arch="x86_64")]
     asm!(
       "mov rax, 1",
       "mov rdi, 1",
@@ -83,16 +83,15 @@ fn write_via_syscall(mut message : String) {
       out(reg) out,
       in(reg) len,
     );
-    
     let r = libc::strerror(-out);
     libc::printf(r);
   }
 }
 
 fn exit(code : i32) {
+  // exit via syscall
+  #[cfg(target_arch="x86_64")]
   unsafe {
-    // exit via syscall
-    #[cfg(target_arch="x86_64")]
     asm!(
       "mov rax, 60",
       "mov rdi, {0:r}",
@@ -108,10 +107,12 @@ fn get_pid() {
 }
 
 fn syscall0(number : i32) -> i32 {
-  let mut ret : i32;
+  #[cfg(target_arch="aarch64")]
+  return 0;
 
+  #[cfg(target_arch="x86_64")]
   unsafe {
-    #[cfg(target_arch="x86_64")]
+    let mut ret : i32 = 0;
     asm!(
       "mov rax, {0:r}",
       "syscall",
@@ -119,9 +120,8 @@ fn syscall0(number : i32) -> i32 {
       in(reg) number,
       out(reg) ret,
     );
+    ret
   }
-
-  ret
 }
 
 
