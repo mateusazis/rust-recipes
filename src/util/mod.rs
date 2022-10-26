@@ -1,17 +1,17 @@
 #![allow(dead_code)]
 
-pub mod interfaces;
-pub mod math;
-pub mod asyncer;
-pub mod glibc;
-pub mod traits;
-pub mod generics;
 pub mod associated_types;
-pub mod generics_vs_associated_types;
+pub mod asyncer;
 pub mod cell;
-pub mod threading;
-pub mod ffi;
-pub mod inline_assembly;
 pub mod conditional_compilation;
 pub mod errors;
+pub mod ffi;
+pub mod generics;
+pub mod generics_vs_associated_types;
+pub mod glibc;
+pub mod inline_assembly;
+pub mod interfaces;
+pub mod math;
+pub mod threading;
+pub mod traits;
 pub mod unions;

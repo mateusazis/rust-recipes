@@ -5,14 +5,18 @@ trait Iterator {
 }
 
 struct Range {
-    start : i32,
+    start: i32,
     end: i32,
-    current_pos : i32
+    current_pos: i32,
 }
 
 impl Range {
-    fn new(start: i32, end : i32) -> Range {
-        Range{start, end, current_pos: start}
+    fn new(start: i32, end: i32) -> Range {
+        Range {
+            start,
+            end,
+            current_pos: start,
+        }
     }
 }
 
@@ -33,7 +37,7 @@ impl Iterator for Range {
 
 struct Words<'a>(&'a [&'a str]);
 
-impl <'a> Iterator for Words<'a> {
+impl<'a> Iterator for Words<'a> {
     type Item = &'a str;
 
     fn next(&mut self) -> Option<Self::Item> {

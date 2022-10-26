@@ -3,6 +3,7 @@ name = "rust-recipes"
 version = "0.1.0"
 edition = "2021"
 build = "build.rs"
+edition = 2021
 
 [features]
 secret_of_life_known = []
