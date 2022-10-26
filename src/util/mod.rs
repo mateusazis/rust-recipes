@@ -14,3 +14,4 @@ pub mod ffi;
 pub mod inline_assembly;
 pub mod conditional_compilation;
 pub mod errors;
+pub mod unions;
