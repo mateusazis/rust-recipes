@@ -110,9 +110,10 @@ fn syscall0(number: i32) -> i32 {
     #[cfg(target_arch = "aarch64")]
     return 0;
 
+    // For the x86_64 registers: https://stackoverflow.com/a/2538212
     #[cfg(target_arch = "x86_64")]
     unsafe {
-        let mut ret: i32 = 0;
+        let mut ret: i32;
         asm!(
           "mov rax, {0:r}",
           "syscall",
@@ -120,7 +121,7 @@ fn syscall0(number: i32) -> i32 {
           in(reg) number,
           out(reg) ret,
         );
-        ret
+        return ret;
     }
 }
 
