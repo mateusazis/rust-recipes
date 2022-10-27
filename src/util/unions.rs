@@ -40,6 +40,32 @@ impl<'a> std::fmt::Display for Holder<'a> {
     }
 }
 
+union Holder2 {
+    integer: u32,
+    long: u64,
+    data: [u8; 8],
+}
+
+fn handle(holder: &Holder2) {
+    unsafe {
+        match holder {
+            &Holder2 {
+                data: [0x41u8, 0x41u8, 0x41u8, 0x41u8, 0x41u8, 0x41u8, 0x41u8, 0x41u8],
+            } => {
+                println!("Data case");
+            }
+            &Holder2 {
+                integer: 0x41414141u32,
+            } => {
+                println!("Integer case: {:x}", holder.integer);
+            }
+            _ => {
+                println!("No case; bytes: {:?}", holder.data);
+            }
+        };
+    }
+}
+
 pub fn main() {
     let mut h = Holder {
         inner: BasicHolder { integer: 10 },
@@ -54,4 +80,15 @@ pub fn main() {
     h.inner.message = "hello world";
     h.holder_type = HolderType::STR;
     println!("Holder: {}", h);
+
+    let mut h2 = Holder2 {
+        integer: 0x41414141u32,
+    };
+    // h2.integer = 256*256;
+    h2.long = 0x4141414141414141u64;
+    handle(&h2);
+    unsafe {
+        h2.data.copy_from_slice("AAAAAAAA".as_bytes());
+    }
+    handle(&h2);
 }
