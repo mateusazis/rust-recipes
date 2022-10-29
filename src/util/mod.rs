@@ -15,3 +15,4 @@ pub mod math;
 pub mod threading;
 pub mod traits;
 pub mod unions;
+pub mod closures;
