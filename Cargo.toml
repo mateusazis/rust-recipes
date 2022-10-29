@@ -3,6 +3,7 @@ name = "rust-recipes"
 version = "0.1.0"
 edition = "2021"
 build = "build.rs"
+links = "mylib"
 
 [features]
 secret_of_life_known = []
@@ -14,3 +15,12 @@ md5 = "0.7.0"
 async-std = "1.12.0"
 libc = "0.2.134"
 futures = "0.3.24"
+
+#[target.aarch64-unknown-linux-gnu]
+#rustc-flags = ["-fuse-ld=lld"]
+#linker = "/usr/bin/ldd"
+#rustflags = [
+#    "-C", "link-arg=-fuse-ld=lld",
+#]
+#linker = "clang"
+

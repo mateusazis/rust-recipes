@@ -1,2 +1,6 @@
+CC=clang
+
 libmylib.so: mylib.c
-	clang --shared $^ -o$@
+	echo "CFLAGS are: " $(CFLAGS)
+	$(CC) $(CFLAGS) --shared $^ -o$@
+	# clang --target=arm64v7a-linux-gnueabi -fuse-ld=lld --shared $^ -o$@

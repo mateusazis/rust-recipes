@@ -3,7 +3,7 @@ use std::process::exit;
 pub fn main() {
     unsafe {
         libc::printf(
-            "Parent: My pid is %d and my parent is %d\n\0".as_ptr() as *const i8,
+            "Parent: My pid is %d and my parent is %d\n\0".as_ptr() as *const libc::c_char,
             libc::getpid(),
             libc::getppid(),
         );
