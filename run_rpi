@@ -1,4 +1,7 @@
 #! /bin/bash
 
 LD_LIBRARY_PATH=./src/util
-cargo build --target aarch64-unknown-linux-gnu
+rm ./src/util/libmylib.so
+cargo build --target aarch64-unknown-linux-musl
+file ./src/util/libmylib.so
+file ./target/aarch64-unknown-linux-musl/debug/rust-recipes
