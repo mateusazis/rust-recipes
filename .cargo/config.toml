@@ -2,4 +2,10 @@
 linker = "/usr/bin/ld.lld"
 
 [target.aarch64-unknown-linux-gnu]
-linker = "/usr/bin/ld.lld"
+linker = "aarch64-linux-gnu-gcc"
+rustflags = "-C prefer-dynamic -L /usr/aarch64-linux-gnu/lib/ -L ./src/util"
+
+# If "-C prefer-dynamic" is provided, Rust's libstd
+# is dynamically linked and must be copied from the host
+# (under ./rustup/toolchains/...) to the target.
+# See: https://doc.rust-lang.org/rustc/codegen-options/index.html#prefer-dynamic

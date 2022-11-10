@@ -1,6 +1,6 @@
 CC=clang
+DEFAULT_FLAGS=-nostdlib --shared -fuse-ld=lld
 
 libmylib.so: mylib.c
-	echo "CFLAGS are: " $(CFLAGS)
-	$(CC) $(CFLAGS) --shared $^ -o$@
-	# clang --target=arm64v7a-linux-gnueabi -fuse-ld=lld --shared $^ -o$@
+	@echo "CFLAGS are: " $(CFLAGS)
+	$(CC) $(CFLAGS) $(DEFAULT_FLAGS) $^ -o$@
