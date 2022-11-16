@@ -10,5 +10,9 @@ pub fn main() {
     let ptr = test_string.as_ptr() as *mut libc::c_char;
     println!("[Rust] send string at 0x{:x}", ptr as u64);
     let length = unsafe { toUpper(ptr) };
-    println!("Result: '{}', with length: {}", String::from_utf8_lossy(test_string.as_bytes()), length);
+    println!(
+        "Result: '{}', with length: {}",
+        String::from_utf8_lossy(test_string.as_bytes()),
+        length
+    );
 }
