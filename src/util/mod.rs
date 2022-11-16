@@ -16,3 +16,4 @@ pub mod threading;
 pub mod traits;
 pub mod unions;
 pub mod closures;
+pub mod testing;
