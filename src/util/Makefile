@@ -1,5 +1,5 @@
 CC=clang
-DEFAULT_FLAGS=-nostdlib --shared -fuse-ld=lld
+DEFAULT_FLAGS=-nostdlib --shared
 
 libmylib.so: mylib.c
 	@echo "CFLAGS are: " $(CFLAGS)
