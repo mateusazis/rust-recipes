@@ -13,6 +13,7 @@ pub mod inline_assembly;
 pub mod interfaces;
 pub mod math;
 pub mod threading;
+pub mod threading_shared_state;
 pub mod traits;
 pub mod unions;
 pub mod closures;

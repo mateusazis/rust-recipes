@@ -1,5 +1,4 @@
 #! /bin/bash
 
 export LD_LIBRARY_PATH=./src/util
-rm src/util/libmylib.so 2> /dev/null || true
 cargo run $@

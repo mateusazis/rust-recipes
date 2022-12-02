@@ -41,6 +41,6 @@ fn main()  {
     return;
   }
 
-  util::ffi::main()
+  util::threading_shared_state::main()
 }
 
