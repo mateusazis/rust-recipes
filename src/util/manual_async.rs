@@ -105,7 +105,7 @@ impl Executor {
 }
 
 async fn build_simple_future() -> i32 {
-  let future_a = DelayedResult::new(4, 10);
+  let future_a = DelayedResult::new(2, 10);
   let future_b = DelayedResult::new(4, 14);
   // let future_b = async {
   //   33
@@ -116,7 +116,11 @@ async fn build_simple_future() -> i32 {
   // let a = future_a.await;
   // let b= future_b.await;
 
+
   let (a, b) = join(future_a, future_b).await;
+
+  println!("Got results, sleeping for 2 secs...");
+  async_std::task::sleep(Duration::from_secs(2)).await;
   // let (a) = join(future_a).await;
   // a+1
 
