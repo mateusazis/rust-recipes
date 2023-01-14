@@ -35,18 +35,13 @@ impl Future for DelayedResult {
         *wrapper = new_value;
         std::mem::drop(wrapper);
 
-        println!("Count is: {}", new_value);
+        println!("Count for {} is: {}", (*self).result, new_value);
         if new_value >= self.required_call_count {
             return Poll::Ready(self.result);
         }
         cx.waker().clone().wake();
         Poll::Pending
     }
-}
-
-struct Executor {
-    sender: SyncSender<i32>,
-    thread: JoinHandle<()>,
 }
 
 struct Task {
@@ -63,13 +58,13 @@ impl ArcWake for Task {
     }
 }
 
-struct Executor2 {
+struct Executor {
     sender: SyncSender<Arc<Task>>,
     thread: JoinHandle<()>,
 }
 
-impl Executor2 {
-    fn new(delay: Duration) -> Executor2 {
+impl Executor {
+    fn new(delay: Duration) -> Executor {
         let (sender, receiver) = sync_channel::<Arc<Task>>(8096);
         let thread = spawn(move || {
             while let Ok(task) = receiver.recv() {
@@ -84,12 +79,12 @@ impl Executor2 {
                     }
                     Poll::Ready(val) => {
                         println!("Execution finished with: {}", val);
-                        return;
+                        // return;
                     }
                 }
             }
         });
-        Executor2 { sender, thread }
+        Executor { sender, thread }
     }
 
     fn join(self) {
@@ -111,9 +106,9 @@ async fn build_simple_future() -> i32 {
 }
 
 pub fn main() {
-    let executor= Executor2::new(Duration::from_millis(500));
-    let fut = DelayedResult::new(5, 42);
-    executor.send(fut.boxed());
-    // executor.send(build_simple_future().boxed());
+    let executor= Executor::new(Duration::from_millis(500));
+    executor.send(DelayedResult::new(5, 42).boxed());
+    executor.send(DelayedResult::new(10, -3).boxed());
+    executor.send(build_simple_future().boxed());
     executor.join();
 }
