@@ -41,6 +41,6 @@ fn main()  {
     return;
   }
 
-  util::threading_shared_state::main()
+  util::manual_async::main()
 }
 
