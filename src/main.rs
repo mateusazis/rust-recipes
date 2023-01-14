@@ -21,8 +21,9 @@ fn main_aarch64() {
     RunOption::new("Inline Assembly", util::inline_assembly::main),
     RunOption::new("Threading", util::threading::main),
     RunOption::new("Async", util::asyncer::main),
+    RunOption::new("Manual async", util::manual_async::main),
   ];
-  
+
   println!("Choose an option:");
   for i in 0..options.len() {
     println!("{}) {}", i, options.get(i).unwrap().name)
