@@ -45,6 +45,28 @@ impl Future for DelayedResult {
     }
 }
 
+struct BlockingTaskFuture<F, T>
+where F : FnOnce() -> T
+{
+  task : F,
+  done : bool,
+}
+
+impl <F, T> Future for BlockingTaskFuture<F, T>
+where F: FnOnce() -> T {
+  fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+    spawn(|| {
+      self.as_mut().task();
+      (*self).done = true;
+      cx.waker().wake();
+    });
+    if self.done {
+      return Poll::Ready(())
+    }
+    Poll::Pending
+  }
+}
+
 struct Task {
     future: Mutex<BoxFuture<'static, i32>>,
     sender: SyncSender<Arc<Task>>,
