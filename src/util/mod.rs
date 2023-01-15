@@ -19,3 +19,5 @@ pub mod threading;
 pub mod threading_shared_state;
 pub mod traits;
 pub mod unions;
+
+mod manual_async_futures;

@@ -1,8 +1,7 @@
-use futures::future::{join, BoxFuture};
+use crate::util::manual_async_futures::{delayed, run_blocking_task};
+
+use futures::future::{join, BoxFuture, FutureExt};
 use futures::task::{waker_ref, ArcWake};
-use futures::{Future, FutureExt};
-use std::fmt::Display;
-use std::pin::Pin;
 use std::sync::mpsc::{sync_channel, SyncSender};
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -10,90 +9,7 @@ use std::task::{Context, Poll};
 use std::thread::{sleep, JoinHandle};
 use std::time::Duration;
 
-struct DelayedResult {
-    current_call_count: Mutex<i32>,
-    required_call_count: i32,
-    result: i32,
-}
-
-impl DelayedResult {
-    fn new(required_call_count: i32, result: i32) -> DelayedResult {
-        DelayedResult {
-            current_call_count: Mutex::new(0),
-            required_call_count,
-            result,
-        }
-    }
-}
-
-impl Future for DelayedResult {
-    type Output = i32;
-
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        let lock = (*self).current_call_count.lock();
-        let mut wrapper = lock.unwrap();
-        let new_value = *wrapper + 1;
-        *wrapper = new_value;
-        std::mem::drop(wrapper);
-
-        println!("Count for {} is: {}", (*self).result, new_value);
-        if new_value >= self.required_call_count {
-            return Poll::Ready(self.result);
-        }
-        cx.waker().clone().wake();
-        Poll::Pending
-    }
-}
-
-struct BlockingTaskFuture<F, T>
-where
-    F: FnOnce() -> T + Send + Sync + Copy + 'static,
-    T: Send + Sync + Copy + 'static,
-{
-    task: F,
-    result: Arc<Mutex<Option<T>>>,
-}
-
-impl<F, T> Future for BlockingTaskFuture<F, T>
-where
-    F: FnOnce() -> T + Send + Sync + Copy + 'static,
-    T: Send + Sync + Copy + 'static,
-{
-    type Output = T;
-
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        if let Some(ret) = *self.result.lock().unwrap() {
-            return Poll::Ready(ret);
-        }
-
-        let task = (*self).task;
-
-        let result_mutex = self.result.clone();
-        let waker = cx.waker().clone();
-
-        std::thread::Builder::new()
-            .name(String::from("blocking thread"))
-            .spawn(move || {
-                let ret = (task)();
-                *result_mutex.lock().unwrap() = Some(ret);
-                waker.wake_by_ref();
-            })
-            .expect("should spawn thread");
-        Poll::Pending
-    }
-}
-
-async fn run_blocking<F, T>(func: F) -> T
-where
-    F: FnOnce() -> T + Send + Sync + Copy + 'static,
-    T: Send + Sync + Copy + 'static,
-{
-    BlockingTaskFuture {
-        task: func,
-        result: Arc::new(Mutex::new(None)),
-    }
-    .await
-}
+const DEFAULT_CHANNEL_SIZE : usize = 8096;
 
 struct Task {
     future: Mutex<BoxFuture<'static, i32>>,
@@ -115,7 +31,7 @@ struct Executor {
 
 impl Executor {
     fn new(delay: Duration) -> Executor {
-        let (sender, receiver) = sync_channel::<Arc<Task>>(8096);
+        let (sender, receiver) = sync_channel::<Arc<Task>>(DEFAULT_CHANNEL_SIZE);
         let thread = std::thread::Builder::new()
             .name(String::from("Executor"))
             .spawn(move || {
@@ -158,8 +74,8 @@ impl Executor {
 }
 
 async fn build_simple_future() -> i32 {
-    let future_a = DelayedResult::new(2, 10);
-    let future_b = DelayedResult::new(4, 14);
+    let future_a = delayed(2, 10);
+    let future_b = delayed(4, 14);
     // let future_b = async {
     //   33
     // };
@@ -195,22 +111,22 @@ pub fn main() {
 
     executor.send(
         async {
-            let res1 = DelayedResult::new(10, 3);
+            let res1 = delayed(10, 3);
             println!("Res1: {}", res1.await);
-            run_blocking(|| {
+            run_blocking_task(|| {
                 let blocking_result = do_blocking_work();
                 println!("Blocking result: {}", blocking_result);
                 0
             })
             .await;
-            let res2 = DelayedResult::new(2, 4);
+            let res2 = delayed(2, 4);
             println!("Res2: {}", res2.await);
             0
         }
         .boxed(),
     );
 
-    executor.send(DelayedResult::new(5, 42).boxed());
+    executor.send(delayed(5, 42).boxed());
     // executor.send(DelayedResult::new(10, -3).boxed());
     // executor.send(build_simple_future().boxed());
     executor.join();
