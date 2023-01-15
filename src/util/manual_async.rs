@@ -47,8 +47,8 @@ impl Future for DelayedResult {
 
 struct BlockingTaskFuture<F, T>
 where
-    F: Fn() -> T + Send + Sync + Copy + 'static,
-    T: Send + Sync + 'static + Display + Copy,
+    F: FnOnce() -> T + Send + Sync + Copy + 'static,
+    T: Send + Sync + Copy + 'static,
 {
     task: F,
     result: Arc<Mutex<Option<T>>>,
@@ -56,8 +56,8 @@ where
 
 impl<F, T> Future for BlockingTaskFuture<F, T>
 where
-    F: Fn() -> T + Send + Sync + Copy + 'static,
-    T: Send + Sync + 'static + Display + Copy,
+    F: FnOnce() -> T + Send + Sync + Copy + 'static,
+    T: Send + Sync + Copy + 'static,
 {
     type Output = T;
 
@@ -68,15 +68,15 @@ where
 
         let task = (*self).task;
 
-        let res = self.result.clone();
-        let w = cx.waker().clone();
+        let result_mutex = self.result.clone();
+        let waker = cx.waker().clone();
 
         std::thread::Builder::new()
             .name(String::from("blocking thread"))
             .spawn(move || {
                 let ret = (task)();
-                *res.lock().unwrap() = Some(ret);
-                w.wake_by_ref();
+                *result_mutex.lock().unwrap() = Some(ret);
+                waker.wake_by_ref();
             })
             .expect("should spawn thread");
         Poll::Pending
@@ -85,8 +85,8 @@ where
 
 async fn run_blocking<F, T>(func: F) -> T
 where
-    F: Fn() -> T + Send + Sync + Copy + 'static,
-    T: Send + Sync + 'static + Display + Copy,
+    F: FnOnce() -> T + Send + Sync + Copy + 'static,
+    T: Send + Sync + Copy + 'static,
 {
     BlockingTaskFuture {
         task: func,
