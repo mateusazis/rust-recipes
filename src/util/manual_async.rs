@@ -63,7 +63,8 @@ impl Executor {
         self.thread.join().expect("should join");
     }
 
-    fn send(&self, future: BoxFuture<'static, i32>) {
+    fn send(&self, future: impl FutureExt<Output = i32> + Send + 'static)
+    {
         let task = Arc::new(Task {
             future: Mutex::new(future.boxed()),
             sender: self.sender.clone(),
@@ -123,10 +124,10 @@ pub fn main() {
             println!("Res2: {}", res2.await);
             0
         }
-        .boxed(),
     );
 
-    executor.send(delayed(5, 42).boxed());
+    let f = delayed(5, 42);
+    executor.send(f);
     // executor.send(DelayedResult::new(10, -3).boxed());
     // executor.send(build_simple_future().boxed());
     executor.join();

@@ -2,16 +2,20 @@ use futures::Future;
 use std::pin::Pin;
 use std::sync::Arc;
 use std::sync::Mutex;
+use std::fmt::Display;
 use std::task::{Context, Poll};
 
-struct DelayedResult {
+struct DelayedResult<T>
+where T: Display + Copy
+{
     current_call_count: Mutex<i32>,
     required_call_count: i32,
-    result: i32,
+    result: T,
 }
 
-impl Future for DelayedResult {
-    type Output = i32;
+impl <T> Future for DelayedResult<T>
+where T: Display + Copy {
+    type Output = T;
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         let lock = (*self).current_call_count.lock();
@@ -29,7 +33,9 @@ impl Future for DelayedResult {
     }
 }
 
-pub async fn delayed(required_call_count: i32, result: i32) -> i32 {
+pub async fn delayed<'a, T>(required_call_count: i32, result: T) -> T
+where T: Display + Copy
+{
     DelayedResult {
         current_call_count: Mutex::new(0),
         required_call_count,
