@@ -75,7 +75,6 @@ where
             .name(String::from("blocking thread"))
             .spawn(move || {
                 let ret = (task)();
-                println!("Ret: {}", ret);
                 *res.lock().unwrap() = Some(ret);
                 w.wake_by_ref();
             })
@@ -178,22 +177,36 @@ async fn build_simple_future() -> i32 {
     a + b + 1
 }
 
+fn do_blocking_work() -> i32 {
+    let mut a = 23;
+    println!("Pre-sleep...");
+    let mut count = 0u64;
+    for _ in 0..1_000_000_000u64 {
+        count += 1;
+    }
+    // std::thread::sleep(Duration::from_secs(15));
+    a += 100;
+    println!("Post-sleep...");
+    a
+}
+
 pub fn main() {
     let executor = Executor::new(Duration::from_millis(500));
 
     executor.send(
-        run_blocking(|| {
-            let mut a = 23;
-            println!("Pre-sleep...");
-            let mut count = 0u64;
-            for _ in 0..1_000_000_000u64 {
-                count += 1;
-            }
-            // std::thread::sleep(Duration::from_secs(15));
-            a += 100;
-            println!("Post-sleep...");
-            a
-        })
+        async {
+            let res1 = DelayedResult::new(10, 3);
+            println!("Res1: {}", res1.await);
+            run_blocking(|| {
+                let blocking_result = do_blocking_work();
+                println!("Blocking result: {}", blocking_result);
+                0
+            })
+            .await;
+            let res2 = DelayedResult::new(2, 4);
+            println!("Res2: {}", res2.await);
+            0
+        }
         .boxed(),
     );
 
