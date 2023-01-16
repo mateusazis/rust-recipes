@@ -2,6 +2,7 @@ use crate::util::manual_async_futures::{delayed, run_blocking_task};
 
 use futures::future::{join, BoxFuture, FutureExt};
 use futures::task::{waker_ref, ArcWake};
+use std::any::Any;
 use std::sync::mpsc::{sync_channel, SyncSender};
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -9,10 +10,10 @@ use std::task::{Context, Poll};
 use std::thread::{sleep, JoinHandle};
 use std::time::Duration;
 
-const DEFAULT_CHANNEL_SIZE : usize = 8096;
+const DEFAULT_CHANNEL_SIZE: usize = 8096;
 
 struct Task {
-    future: Mutex<BoxFuture<'static, i32>>,
+    future: Mutex<BoxFuture<'static, ()>>,
     sender: SyncSender<Arc<Task>>,
     done: Mutex<bool>,
 }
@@ -47,8 +48,8 @@ impl Executor {
                         Poll::Pending => {
                             sleep(delay);
                         }
-                        Poll::Ready(val) => {
-                            println!("Execution finished with: {}", val);
+                        Poll::Ready(_) => {
+                            println!("Execution finished");
                             *task.done.lock().unwrap() = true;
                         }
                     }
@@ -63,8 +64,13 @@ impl Executor {
         self.thread.join().expect("should join");
     }
 
-    fn send(&self, future: impl FutureExt<Output = i32> + Send + 'static)
+    fn send<T>(&self, future: impl FutureExt<Output = T> + Send + 'static)
+    where
+        T: Any,
     {
+        let future = async {
+            future.await;
+        };
         let task = Arc::new(Task {
             future: Mutex::new(future.boxed()),
             sender: self.sender.clone(),
@@ -110,24 +116,21 @@ fn do_blocking_work() -> i32 {
 pub fn main() {
     let executor = Executor::new(Duration::from_millis(500));
 
-    executor.send(
-        async {
-            let res1 = delayed(10, 3);
-            println!("Res1: {}", res1.await);
-            run_blocking_task(|| {
-                let blocking_result = do_blocking_work();
-                println!("Blocking result: {}", blocking_result);
-                0
-            })
-            .await;
-            let res2 = delayed(2, 4);
-            println!("Res2: {}", res2.await);
+    executor.send(async {
+        let res1 = delayed(10, 3);
+        println!("Res1: {}", res1.await);
+        run_blocking_task(|| {
+            let blocking_result = do_blocking_work();
+            println!("Blocking result: {}", blocking_result);
             0
-        }
-    );
+        })
+        .await;
+        let res2 = delayed(2, 4);
+        println!("Res2: {}", res2.await);
+        1
+    });
 
-    let f = delayed(5, 42);
-    executor.send(f);
+    executor.send(delayed(5, 42));
     // executor.send(DelayedResult::new(10, -3).boxed());
     // executor.send(build_simple_future().boxed());
     executor.join();
