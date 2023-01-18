@@ -14,6 +14,7 @@ pub mod inline_assembly;
 pub mod interfaces;
 pub mod manual_async;
 pub mod math;
+pub mod pinning;
 pub mod testing;
 pub mod threading;
 pub mod threading_shared_state;
