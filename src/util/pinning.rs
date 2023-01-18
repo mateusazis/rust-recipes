@@ -21,11 +21,18 @@ impl Display for MyString {
         unsafe {
             write!(
                 f,
-                "MyString: from value: '{}', from ptr: '{}'",
-                self.s, *self.s_ptr
+                "MyString: from value: '{}' (@0x{:x}), from ptr: '{}' (@0x{:x})",
+                self.s,
+                ((&self.s) as *const String) as u64,
+                *self.s_ptr,
+                self.s_ptr as u64,
             )
         }
     }
+}
+
+fn print_after_move(v: impl Display) {
+    println!("After move: {}", v);
 }
 
 pub fn main() {
@@ -44,9 +51,26 @@ pub fn main() {
     assert_eq!(ms1.s, "test2");
     assert_eq!(ms2.s, "test1");
 
-    // fails
+    // succeeds... but should it?
     unsafe {
-        assert_eq!(*ms1.s_ptr, "test2");
-        assert_eq!(*ms2.s_ptr, "test1");
+        assert_eq!(*ms1.s_ptr, "test1");
+        assert_eq!(*ms2.s_ptr, "test2");
     }
+    print_after_move(ms2);
+
+    println!();
+
+    let p = MyString::new("test1");
+    let pp = MyString::new("test2");
+    let mut p1 = std::pin::Pin::new(&p);
+    let mut p2 = std::pin::Pin::new(&pp);
+    println!("P1: {}", p1);
+    println!("P2: {}", p2);
+
+    println!("Swapping...");
+    std::mem::swap(&mut p1, &mut p2);
+
+    println!("P1: {}", p1);
+    println!("P2: {}", p2);
+    print_after_move(p2);
 }
