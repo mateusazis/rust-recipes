@@ -1,3 +1,8 @@
+use another_library::hello_producer::HelloProducer;
+
 fn main() {
-    println!("Hello world form another binary!");
+    println!(
+        "Running from another binary! Got from lib: '{}'",
+        HelloProducer {}.get_hello()
+    );
 }

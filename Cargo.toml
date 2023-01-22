@@ -19,3 +19,7 @@ futures = "0.3.25"
 
 [[bin]]
 name = "another_binary"
+
+[lib]
+name = "another_library"
+path = "src/another_library/lib.rs"
