@@ -41,5 +41,5 @@ fn main() {
         // return;
     }
 
-    util::pinning::main()
+    util::alloc::main()
 }
