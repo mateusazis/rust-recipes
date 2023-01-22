@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 build = "build.rs"
 links = "mylib"
+default-run = "rust-recipes"
 
 [features]
 secret_of_life_known = []
