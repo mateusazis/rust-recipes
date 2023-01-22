@@ -1,18 +1,20 @@
 use std::{alloc::Layout, ops::Deref};
 
-struct Wrapper {
-    ptr: *const u8,
+struct Wrapper<T> {
+    ptr: *const T,
 }
 
-impl Wrapper {
-    fn new(value: i32) -> Wrapper {
-        let layout = Layout::new::<i32>();
+impl<T> Wrapper<T> {
+    fn new(value: T) -> Wrapper<T> {
+        let layout = Layout::new::<T>();
         let ptr = unsafe {
             let ptr = std::alloc::alloc(layout);
-            *(ptr as *mut i32) = value;
+            *(ptr as *mut T) = value;
             ptr
         };
-        Wrapper { ptr }
+        Wrapper {
+            ptr: ptr as *const T,
+        }
     }
 
     fn get_value(&self) -> i32 {
@@ -20,15 +22,16 @@ impl Wrapper {
     }
 }
 
-impl Deref for Wrapper {
-    type Target = i32;
+impl<T> Deref for Wrapper<T> {
+    type Target = T;
     fn deref(&self) -> &Self::Target {
-        let v = self.get_value();
-        v
+        // let v = self.get_value();
+        unsafe { &*(self.ptr as *const Self::Target) }
     }
 }
 
 pub fn main() {
     let w = Wrapper::new(4);
-    println!("value: {}", w.get_value());
+    let w2 = Wrapper::new("hello world");
+    println!("value1: {}, value2: {}", *w, *w2);
 }
