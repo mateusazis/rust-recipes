@@ -1,11 +1,11 @@
 trait Base {
-    fn getV(&self) -> i32;
+    fn get_v(&self) -> i32;
 }
 
 struct Derived1 {}
 
 impl Base for Derived1 {
-    fn getV(&self) -> i32 {
+    fn get_v(&self) -> i32 {
         42
     }
 }
@@ -13,19 +13,19 @@ impl Base for Derived1 {
 struct Derived2 {}
 
 impl Base for Derived2 {
-    fn getV(&self) -> i32 {
+    fn get_v(&self) -> i32 {
         89
     }
 }
 
 fn print_without_template(b: &dyn Base) {
     let addr = print_without_template as *const u8;
-    println!("Func @ 0x{:x}, value: {}", addr as u64, b.getV());
+    println!("Func @ 0x{:x}, value: {}", addr as u64, b.get_v());
 }
 
 fn print_with_template<T: Base>(b: &T) {
     let addr = print_with_template::<T> as *const u8;
-    println!("Func @ 0x{:x}, value: {}", addr as u64, b.getV());
+    println!("Func @ 0x{:x}, value: {}", addr as u64, b.get_v());
 }
 
 pub fn main() {
