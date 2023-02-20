@@ -41,5 +41,5 @@ fn main() {
         // return;
     }
 
-    util::alloc::main()
+    util::template_functions::main()
 }
