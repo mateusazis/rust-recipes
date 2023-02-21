@@ -41,5 +41,5 @@ fn main() {
         // return;
     }
 
-    util::template_functions::main()
+    util::alignment::main()
 }

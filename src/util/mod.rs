@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+pub mod alignment;
 pub mod alloc;
 pub mod associated_types;
 pub mod asyncer;
