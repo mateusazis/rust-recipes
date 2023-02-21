@@ -28,6 +28,26 @@ fn print_with_template<T: Base>(b: &T) {
     println!("Func @ 0x{:x}, value: {}", addr as u64, b.get_v());
 }
 
+trait Getter {
+    fn get_integer() -> i32;
+}
+
+impl Getter for i32 {
+    fn get_integer() -> i32 {
+        40
+    }
+}
+impl Getter for f32 {
+    fn get_integer() -> i32 {
+        226
+    }
+}
+
+fn print_integer<T: Getter>() {
+    let v: i32 = T::get_integer();
+    println!("Integer value: {}", v);
+}
+
 pub fn main() {
     let d1 = Derived1 {};
     let d2 = Derived2 {};
@@ -37,4 +57,7 @@ pub fn main() {
 
     print_with_template(&d1);
     print_with_template(&d2);
+
+    print_integer::<i32>();
+    print_integer::<f32>();
 }
