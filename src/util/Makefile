@@ -1,4 +1,4 @@
-CC=clang
+# CC=clang
 DEFAULT_FLAGS=-nostdlib --shared
 
 libmylib.so: mylib.c
