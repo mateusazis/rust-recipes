@@ -22,6 +22,9 @@ name = "another_binary"
 [[bin]]
 name = "share_fd_1"
 
+[[bin]]
+name = "share_fd_2"
+
 [lib]
 name = "another_library"
 path = "src/another_library/lib.rs"
