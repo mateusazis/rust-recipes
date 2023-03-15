@@ -13,6 +13,6 @@ mod tests {
 
     #[test]
     fn test_sum_returns_the_sum() {
-        assert_eq!(crate::util::testing::sum(8, 5), 13);
+        assert_eq!(crate::testing::sum(8, 5), 13);
     }
 }

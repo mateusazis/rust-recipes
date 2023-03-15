@@ -1,10 +1,10 @@
 [package]
-name = "rust-recipes"
+name = "rust_recipes"
 version = "0.1.0"
 edition = "2021"
 build = "build.rs"
 links = "mylib"
-default-run = "rust-recipes"
+default-run = "rust_recipes"
 
 [features]
 secret_of_life_known = []

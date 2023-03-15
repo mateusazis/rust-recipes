@@ -418,7 +418,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust-recipes"
+name = "rust_recipes"
 version = "0.1.0"
 dependencies = [
  "async-std",

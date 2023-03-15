@@ -1,11 +1,13 @@
-#![feature(unix_socket_ancillary_data)]
+// #![feature(unix_socket_ancillary_data, cfg(target_os="linux"))]
 
 use std::error::Error;
 use std::fs::File;
 use std::io::IoSlice;
 use std::os::fd::AsRawFd;
+#[cfg(target_os = "linux")]
 use std::os::unix::net::{SocketAncillary, UnixListener};
 
+#[cfg(target_os = "linux")]
 fn get_file_name() -> String {
     if std::env::args().len() >= 2 {
         return std::env::args().last().unwrap();
@@ -13,6 +15,7 @@ fn get_file_name() -> String {
     String::from("/home/azis/windows_dev/rustplay/recipes/src/bin/lorem.txt")
 }
 
+#[cfg(target_os = "linux")]
 fn main_internal() -> Result<(), Box<dyn Error>> {
     let f = File::open(get_file_name())?;
     let path = "/tmp/my_unix_socket";
@@ -34,5 +37,6 @@ fn main_internal() -> Result<(), Box<dyn Error>> {
 }
 
 fn main() {
+    #[cfg(target_os = "linux")]
     main_internal().expect("should suceed");
 }

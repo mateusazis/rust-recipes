@@ -1,9 +1,10 @@
-#![feature(unix_socket_ancillary_data)]
+// #![feature(unix_socket_ancillary_data)]
 
 use std::error::Error;
 use std::fs::File;
 use std::io::{stdin, BufRead, BufReader, IoSliceMut, Read};
 use std::os::fd::{AsRawFd, FromRawFd};
+#[cfg(target_os = "linux")]
 use std::os::unix::net::{AncillaryData, SocketAncillary, UnixStream};
 
 fn prompt(msg: &str) -> Result<(), std::io::Error> {
@@ -13,6 +14,7 @@ fn prompt(msg: &str) -> Result<(), std::io::Error> {
     Ok(())
 }
 
+#[cfg(target_os = "linux")]
 fn main_internal() -> Result<(), Box<dyn Error>> {
     let arg: String = std::env::args().last().unwrap();
     let f = File::open(arg.as_str())?;
@@ -47,5 +49,6 @@ fn main_internal() -> Result<(), Box<dyn Error>> {
 }
 
 fn main() {
+    #[cfg(target_os = "linux")]
     main_internal().expect("should suceed");
 }

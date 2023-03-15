@@ -41,5 +41,5 @@ fn main() {
         // return;
     }
 
-    util::alignment::main()
+    util::global_alloc::main()
 }
