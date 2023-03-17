@@ -1,3 +1,4 @@
+use std::alloc::Allocator;
 use std::alloc::GlobalAlloc;
 use std::alloc::Layout;
 use std::vec::Vec;
@@ -19,17 +20,49 @@ impl<const T: usize> MyAllocator<T> {
             free_from_here,
         }
     }
-
-    fn init(&mut self) {
-        // for i in 0..1024 {
-        //     self.free_from_here[i] = true;
-        // }
-    }
 }
 
 fn printf(msg: &str) {
     unsafe { libc::printf(msg.as_ptr() as *const libc::c_char) };
 }
+
+// unsafe impl<const T: usize> Allocator for MyAllocator<T> {
+//     fn allocate(&self, layout: Layout) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {}
+//     fn allocate_zeroed(
+//         &self,
+//         layout: Layout,
+//     ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
+//       let ptr = self.alloc(layout)
+//     }
+
+//     fn by_ref(&self) -> &Self
+//     where
+//         Self: Sized,
+//     {
+//     }
+//     unsafe fn deallocate(&self, ptr: std::ptr::NonNull<u8>, layout: Layout) {}
+//     unsafe fn grow(
+//         &self,
+//         ptr: std::ptr::NonNull<u8>,
+//         old_layout: Layout,
+//         new_layout: Layout,
+//     ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
+//     }
+//     unsafe fn grow_zeroed(
+//         &self,
+//         ptr: std::ptr::NonNull<u8>,
+//         old_layout: Layout,
+//         new_layout: Layout,
+//     ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
+//     }
+//     unsafe fn shrink(
+//         &self,
+//         ptr: std::ptr::NonNull<u8>,
+//         old_layout: Layout,
+//         new_layout: Layout,
+//     ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
+//     }
+// }
 
 unsafe impl<const T: usize> GlobalAlloc for MyAllocator<T> {
     unsafe fn alloc(&self, layout: std::alloc::Layout) -> *mut u8 {
@@ -93,12 +126,15 @@ unsafe impl<const T: usize> GlobalAlloc for MyAllocator<T> {
 
 pub fn main() {
     // unsafe { GLOBAL.init() };
-    // let letters: Vec<&str> = vec!["a", "b", "cd", "efg", "h"];
-    // let joined: String = letters
-    //     .into_iter()
-    //     .map(|s| String::from(s).to_uppercase())
-    //     .collect();
-    // println!("Result: {}", joined);
+    const allocator: MyAllocator<1024> = MyAllocator::<1024>::new();
+    let mut letters: Vec<&str, MyAllocator<1024>> = Vec::<&str, MyAllocator<1024>>::new(allocator);
+    // letters.
+    vec![["a", "b", "cd", "efg", "h"], allocator];
+    let joined: String = letters
+        .into_iter()
+        .map(|s| String::from(s).to_uppercase())
+        .collect();
+    println!("Result: {}", joined);
 }
 
 #[cfg(test)]
@@ -109,8 +145,7 @@ mod tests {
 
     #[test]
     fn test_my_allocator_succeeds() {
-        let mut allocator = MyAllocator::<1024>::new();
-        allocator.init();
+        let allocator = MyAllocator::<1024>::new();
         let base_addr: *const u8 = allocator.data.as_ptr();
         let layout4 = Layout::from_size_align(4, 4).unwrap();
         let layout8 = Layout::from_size_align(8, 4).unwrap();
@@ -132,8 +167,7 @@ mod tests {
 
     #[test]
     fn test_my_allocator_out_of_memory() {
-        let mut allocator = MyAllocator::<7>::new();
-        allocator.init();
+        let allocator = MyAllocator::<7>::new();
         let base_addr: *const u8 = allocator.data.as_ptr();
         let layout4 = Layout::from_size_align(4, 4).unwrap();
         let layout8 = Layout::from_size_align(8, 4).unwrap();
@@ -148,5 +182,23 @@ mod tests {
         assert_eq!(std::ptr::null(), unsafe { allocator.alloc(layout8) });
         assert_eq!(std::ptr::null(), unsafe { allocator.alloc(layout4) });
         assert_eq!(4, alloc(layout3));
+    }
+
+    #[test]
+    fn test_my_allocator_dealloc() {
+        let allocator = MyAllocator::<7>::new();
+        let base_addr: *const u8 = allocator.data.as_ptr();
+        let layout4 = Layout::from_size_align(4, 4).unwrap();
+        let layout8 = Layout::from_size_align(8, 4).unwrap();
+
+        let alloc = |layout: Layout| unsafe {
+            let ptr = allocator.alloc(layout);
+            ptr.offset_from(base_addr)
+        };
+
+        assert_eq!(0, alloc(layout4));
+        let ptr = unsafe { allocator.alloc(layout8) };
+        assert_eq!(4, unsafe { ptr.offset_from(base_addr) });
+        assert_eq!(4, alloc(layout4));
     }
 }
