@@ -1,7 +1,7 @@
 /// Adds two numbers
 ///
 /// ```
-/// assert_eq!(rust_recipes::util::testing::sum(9,4), 13);
+/// assert_eq!(another_library::testing::sum(9,4), 13);
 /// ```
 pub fn sum(a: i32, b: i32) -> i32 {
     a + b
