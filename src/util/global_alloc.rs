@@ -22,6 +22,12 @@ impl<const T: usize> MyAllocator<T> {
             free_from_here,
         }
     }
+
+    #[inline]
+    fn set_free(&self, pos: isize, value: bool) {
+        let free_base = self.free_from_here.as_ptr() as *mut bool;
+        unsafe { *free_base.offset(pos) = value };
+    }
 }
 
 fn printf(msg: &str) {
@@ -87,7 +93,6 @@ unsafe impl<const T: usize> GlobalAlloc for MyAllocator<T> {
 
             let base: *mut u8 = self.data.as_ptr() as *mut u8;
 
-            let free_base = self.free_from_here.as_ptr() as *mut bool;
             for j in 0..layout.size() {
                 let pos = (i + j) as isize;
                 println!(
@@ -97,12 +102,11 @@ unsafe impl<const T: usize> GlobalAlloc for MyAllocator<T> {
                     j,
                     layout.size()
                 );
-                *free_base.offset(pos) = false;
+                self.set_free(pos, false);
             }
 
             return base.offset(i as isize);
         }
-        // libc::printf("ret null\n\0".as_ptr() as *const libc::c_char);
         std::ptr::null_mut()
     }
 
@@ -112,11 +116,9 @@ unsafe impl<const T: usize> GlobalAlloc for MyAllocator<T> {
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: std::alloc::Layout) {
         let offset = ptr.offset_from(self.data.as_ptr());
-        let free_base = self.free_from_here.as_ptr().offset(offset) as *mut bool;
 
         for i in 0..(layout.size() as isize) {
-            println!("clear bit at {}", i);
-            *free_base.offset(i) = true;
+            self.set_free(i + offset, true);
         }
     }
 
