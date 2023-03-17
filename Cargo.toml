@@ -21,9 +21,11 @@ name = "another_binary"
 
 [[bin]]
 name = "share_fd_1"
+required-features = ["unix_socket_ancillary_data"]
 
 [[bin]]
 name = "share_fd_2"
+required-features = ["unix_socket_ancillary_data"]
 
 [lib]
 name = "another_library"
