@@ -34,43 +34,62 @@ fn printf(msg: &str) {
     unsafe { libc::printf(msg.as_ptr() as *const libc::c_char) };
 }
 
-// unsafe impl<const T: usize> Allocator for MyAllocator<T> {
-//     fn allocate(&self, layout: Layout) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {}
-//     fn allocate_zeroed(
-//         &self,
-//         layout: Layout,
-//     ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
-//       let ptr = self.alloc(layout)
-//     }
+unsafe impl<const T: usize> Allocator for MyAllocator<T> {
+    fn allocate(&self, layout: Layout) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
+        let slice = unsafe {
+            let ptr = self.alloc(layout);
+            if ptr.is_null() {
+                println!("ptr is null!");
+                return Err(std::alloc::AllocError {});
+            }
+            std::ptr::slice_from_raw_parts_mut(ptr, layout.size())
+        };
+        Ok(std::ptr::NonNull::new(slice).unwrap())
+    }
+    fn allocate_zeroed(
+        &self,
+        layout: Layout,
+    ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
+        self.allocate(layout)
+    }
 
-//     fn by_ref(&self) -> &Self
-//     where
-//         Self: Sized,
-//     {
-//     }
-//     unsafe fn deallocate(&self, ptr: std::ptr::NonNull<u8>, layout: Layout) {}
-//     unsafe fn grow(
-//         &self,
-//         ptr: std::ptr::NonNull<u8>,
-//         old_layout: Layout,
-//         new_layout: Layout,
-//     ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
-//     }
-//     unsafe fn grow_zeroed(
-//         &self,
-//         ptr: std::ptr::NonNull<u8>,
-//         old_layout: Layout,
-//         new_layout: Layout,
-//     ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
-//     }
-//     unsafe fn shrink(
-//         &self,
-//         ptr: std::ptr::NonNull<u8>,
-//         old_layout: Layout,
-//         new_layout: Layout,
-//     ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
-//     }
-// }
+    fn by_ref(&self) -> &Self
+    where
+        Self: Sized,
+    {
+        return self;
+    }
+    unsafe fn deallocate(&self, ptr: std::ptr::NonNull<u8>, layout: Layout) {
+        self.dealloc(ptr.as_ptr(), layout);
+    }
+    unsafe fn grow(
+        &self,
+        ptr: std::ptr::NonNull<u8>,
+        old_layout: Layout,
+        new_layout: Layout,
+    ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
+        println!("can't grow!");
+        return Err(std::alloc::AllocError {});
+    }
+    unsafe fn grow_zeroed(
+        &self,
+        ptr: std::ptr::NonNull<u8>,
+        old_layout: Layout,
+        new_layout: Layout,
+    ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
+        println!("can't grow zeroed!");
+        return Err(std::alloc::AllocError {});
+    }
+    unsafe fn shrink(
+        &self,
+        ptr: std::ptr::NonNull<u8>,
+        old_layout: Layout,
+        new_layout: Layout,
+    ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
+        println!("can't shrink!");
+        return Err(std::alloc::AllocError {});
+    }
+}
 
 unsafe impl<const T: usize> GlobalAlloc for MyAllocator<T> {
     unsafe fn alloc(&self, layout: std::alloc::Layout) -> *mut u8 {
@@ -130,15 +149,20 @@ unsafe impl<const T: usize> GlobalAlloc for MyAllocator<T> {
 
 pub fn main() {
     // unsafe { GLOBAL.init() };
-    // const allocator: MyAllocator<1024> = MyAllocator::<1024>::new();
-    // let mut letters: Vec<&str, MyAllocator<1024>> = Vec::<&str, MyAllocator<1024>>::new(allocator);
-    // // letters.
-    // vec![["a", "b", "cd", "efg", "h"], allocator];
-    // let joined: String = letters
-    //     .into_iter()
-    //     .map(|s| String::from(s).to_uppercase())
-    //     .collect();
-    // println!("Result: {}", joined);
+    let allocator = MyAllocator::<8096>::new();
+    let mut letters = Vec::new_in(allocator);
+    // letters.
+    letters.push("a");
+    letters.push("b");
+    letters.push("cd");
+    letters.push("efg");
+    letters.push("h");
+    // vec!["a", "b", "cd", "efg", "h"];
+    let joined: String = letters
+        .into_iter()
+        .map(|s| String::from(s).to_uppercase())
+        .collect();
+    println!("Result: {}", joined);
 }
 
 #[cfg(test)]
