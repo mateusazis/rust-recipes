@@ -1,3 +1,5 @@
+#![feature(allocator_api)]
+
 mod util;
 
 // Mac instructions: set DYLD_FALLBACK_LIBRARY_PATH

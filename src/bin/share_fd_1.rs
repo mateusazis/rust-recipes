@@ -1,4 +1,4 @@
-// #![feature(unix_socket_ancillary_data, cfg(target_os="linux"))]
+#![feature(unix_socket_ancillary_data)]
 
 use std::error::Error;
 use std::fs::File;

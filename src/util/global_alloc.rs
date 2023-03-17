@@ -3,6 +3,8 @@ use std::alloc::GlobalAlloc;
 use std::alloc::Layout;
 use std::vec::Vec;
 
+use libc::free;
+
 // #[global_allocator]
 // static mut GLOBAL: MyAllocator = MyAllocator::new();
 
@@ -73,25 +75,13 @@ unsafe impl<const T: usize> GlobalAlloc for MyAllocator<T> {
                 ran = true;
                 let pos = i + j;
                 let in_bounds = pos < T;
-                // if in_bounds {
-                //     libc::printf("in bounds: %d\n\0".as_ptr() as *const libc::c_char);
-                // }
                 if !in_bounds || !self.free_from_here[pos] {
                     found = false;
                     break;
                 }
             }
 
-            if found {
-                // printf("found!!\n\0");
-            }
-
-            if ran {
-                // printf("ran!!\n\0");
-            }
-
             if !found || !ran {
-                // printf("no found nor ran, skip!!\n\0");
                 continue;
             }
 
@@ -115,26 +105,38 @@ unsafe impl<const T: usize> GlobalAlloc for MyAllocator<T> {
         // libc::printf("ret null\n\0".as_ptr() as *const libc::c_char);
         std::ptr::null_mut()
     }
+
     unsafe fn alloc_zeroed(&self, layout: std::alloc::Layout) -> *mut u8 {
         std::ptr::null_mut()
     }
-    unsafe fn dealloc(&self, ptr: *mut u8, layout: std::alloc::Layout) {}
+
+    unsafe fn dealloc(&self, ptr: *mut u8, layout: std::alloc::Layout) {
+        let offset = ptr.offset_from(self.data.as_ptr());
+        let free_base = self.free_from_here.as_ptr().offset(offset) as *mut bool;
+
+        for i in 0..(layout.size() as isize) {
+            println!("clear bit at {}", i);
+            *free_base.offset(i) = true;
+        }
+    }
+
     unsafe fn realloc(&self, ptr: *mut u8, layout: std::alloc::Layout, new_size: usize) -> *mut u8 {
+        println!("realloc called!");
         std::ptr::null_mut()
     }
 }
 
 pub fn main() {
     // unsafe { GLOBAL.init() };
-    const allocator: MyAllocator<1024> = MyAllocator::<1024>::new();
-    let mut letters: Vec<&str, MyAllocator<1024>> = Vec::<&str, MyAllocator<1024>>::new(allocator);
-    // letters.
-    vec![["a", "b", "cd", "efg", "h"], allocator];
-    let joined: String = letters
-        .into_iter()
-        .map(|s| String::from(s).to_uppercase())
-        .collect();
-    println!("Result: {}", joined);
+    // const allocator: MyAllocator<1024> = MyAllocator::<1024>::new();
+    // let mut letters: Vec<&str, MyAllocator<1024>> = Vec::<&str, MyAllocator<1024>>::new(allocator);
+    // // letters.
+    // vec![["a", "b", "cd", "efg", "h"], allocator];
+    // let joined: String = letters
+    //     .into_iter()
+    //     .map(|s| String::from(s).to_uppercase())
+    //     .collect();
+    // println!("Result: {}", joined);
 }
 
 #[cfg(test)]
@@ -186,7 +188,7 @@ mod tests {
 
     #[test]
     fn test_my_allocator_dealloc() {
-        let allocator = MyAllocator::<7>::new();
+        let allocator = MyAllocator::<1024>::new();
         let base_addr: *const u8 = allocator.data.as_ptr();
         let layout4 = Layout::from_size_align(4, 4).unwrap();
         let layout8 = Layout::from_size_align(8, 4).unwrap();
@@ -198,7 +200,11 @@ mod tests {
 
         assert_eq!(0, alloc(layout4));
         let ptr = unsafe { allocator.alloc(layout8) };
+        assert_ne!(std::ptr::null(), ptr);
         assert_eq!(4, unsafe { ptr.offset_from(base_addr) });
+        unsafe { allocator.dealloc(ptr, layout8) };
         assert_eq!(4, alloc(layout4));
+        assert_eq!(8, alloc(layout4));
+        assert_eq!(12, alloc(layout4));
     }
 }
