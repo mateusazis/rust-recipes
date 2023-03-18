@@ -68,8 +68,27 @@ unsafe impl<const T: usize> Allocator for MyAllocator<T> {
         old_layout: Layout,
         new_layout: Layout,
     ) -> Result<std::ptr::NonNull<[u8]>, std::alloc::AllocError> {
-        println!("can't grow!");
-        return Err(std::alloc::AllocError {});
+        let ptr_ptr = ptr.as_ptr();
+        let offset = ptr_ptr.offset_from(self.data.as_ptr()) as usize;
+        let diff = new_layout.size() - old_layout.size();
+        for i in 0..diff {
+            let pos = offset + old_layout.size() + i;
+            if !self.free_from_here[pos] {
+                println!("can't grow at {}!", offset + i);
+                return Err(std::alloc::AllocError {});
+            }
+        }
+        for i in 0..diff {
+            let pos = offset + old_layout.size() + i;
+            self.set_free((pos) as isize, false);
+        }
+        return Ok(std::ptr::NonNull::new(std::ptr::slice_from_raw_parts_mut(
+            ptr_ptr,
+            new_layout.size(),
+        ))
+        .unwrap());
+        // println!("can't grow!");
+        // return Err(std::alloc::AllocError {});
     }
     unsafe fn grow_zeroed(
         &self,
@@ -167,7 +186,7 @@ pub fn main() {
 
 #[cfg(test)]
 mod tests {
-    use std::alloc::{GlobalAlloc, Layout};
+    use std::alloc::{Allocator, GlobalAlloc, Layout};
 
     use super::MyAllocator;
 
@@ -232,5 +251,27 @@ mod tests {
         assert_eq!(4, alloc(layout4));
         assert_eq!(8, alloc(layout4));
         assert_eq!(12, alloc(layout4));
+    }
+
+    #[test]
+    fn test_my_allocator_grow() {
+        let allocator = MyAllocator::<1024>::new();
+        let base_addr: *const u8 = allocator.data.as_ptr();
+        let layout4 = Layout::from_size_align(4, 4).unwrap();
+        let layout8 = Layout::from_size_align(7, 4).unwrap();
+
+        let alloc = |layout: Layout| unsafe {
+            let ptr = allocator.alloc(layout);
+            ptr.offset_from(base_addr)
+        };
+
+        let ptr_non_null = allocator.allocate(layout4).unwrap();
+        let ptr = unsafe { ptr_non_null.as_ref().as_ptr() as *mut u8 };
+        assert_eq!(0, unsafe { ptr.offset_from(base_addr) });
+        unsafe { allocator.grow(std::ptr::NonNull::new(ptr).unwrap(), layout4, layout8) }.unwrap();
+        assert_eq!(7, alloc(layout4));
+        // unsafe { allocator.grow(ptr, old_layout, new_layout) }
+        // assert_eq!(8, alloc(layout4));
+        // assert_eq!(12, alloc(layout4));
     }
 }
