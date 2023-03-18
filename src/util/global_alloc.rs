@@ -75,6 +75,7 @@ unsafe impl<const T: usize> Allocator for MyAllocator<T> {
             let pos = offset + old_layout.size() + i;
             if !self.free_from_here[pos] {
                 println!("can't grow at {}!", offset + i);
+                // TODO: reallocate somewhere else
                 return Err(std::alloc::AllocError {});
             }
         }
