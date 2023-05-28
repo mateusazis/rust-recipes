@@ -1,4 +1,4 @@
-use std::cell::{RefCell, Cell};
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
 struct Incrementer {
@@ -60,7 +60,7 @@ struct RIncrementer {
 impl RIncrementer {
     fn inc(&self, inc: i32) {
         // changes internal state by reference
-        let old_value : i32 = *((*self.value).borrow());
+        let old_value: i32 = *((*self.value).borrow());
         *self.value.borrow_mut() = old_value + inc;
     }
 
@@ -75,7 +75,7 @@ struct RMultiplier {
 
 impl RMultiplier {
     fn mult(&self, multiplier: i32) {
-        let old_value : i32 = *((*self.value).borrow());
+        let old_value: i32 = *((*self.value).borrow());
         *self.value.borrow_mut() = old_value * multiplier;
     }
 
