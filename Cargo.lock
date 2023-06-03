@@ -390,6 +390,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "main"
+version = "0.1.0"
+dependencies = [
+ "async-std",
+ "futures",
+ "libc",
+]
+
+[[package]]
 name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -451,15 +460,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b9ab9c7eadfd8df19006f1cf1a4aed13540ed5cbc047010ece5826e10825488"
 dependencies = [
  "proc-macro2",
-]
-
-[[package]]
-name = "rust-recipes"
-version = "0.1.0"
-dependencies = [
- "async-std",
- "futures",
- "libc",
 ]
 
 [[package]]
