@@ -1,2 +1,4 @@
 /target
 *.so
+/dynamic_library/src/call_rust
+*.o

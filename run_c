@@ -1,0 +1,6 @@
+#! /bin/bash
+set -e
+
+cargo build --lib
+(cd dynamic_library/src && make call_rust)
+LD_LIBRARY_PATH=./target/debug ./dynamic_library/src/call_rust
