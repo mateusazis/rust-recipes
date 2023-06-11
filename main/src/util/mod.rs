@@ -17,6 +17,7 @@ pub mod interfaces;
 pub mod manual_async;
 pub mod math;
 pub mod pinning;
+pub mod simd;
 pub mod template_functions;
 pub mod threading;
 pub mod threading_shared_state;

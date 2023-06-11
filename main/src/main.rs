@@ -1,3 +1,4 @@
+#![feature(portable_simd)]
 mod util;
 
 // Mac instructions: set DYLD_FALLBACK_LIBRARY_PATH
@@ -41,5 +42,5 @@ fn main() {
         // return;
     }
 
-    util::template_functions::main()
+    util::simd::main()
 }
