@@ -3,3 +3,4 @@ members = [
   "main",
   "dynamic_library",
 ]
+resolver = "2"
