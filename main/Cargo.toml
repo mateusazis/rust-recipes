@@ -15,7 +15,7 @@ secret_of_life_known = []
 async-std = "1.12.0"
 libc = "0.2.139"
 futures = "0.3.25"
-rand = "0.8.5"
+rand = {version = "0.8.5", features = ["small_rng", "getrandom"]}
 
 [[bin]]
 name = "another_binary"
