@@ -42,5 +42,5 @@ fn main() {
         // return;
     }
 
-    util::simd::main()
+    util::conditional_compilation::main()
 }

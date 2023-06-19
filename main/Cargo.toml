@@ -7,6 +7,9 @@ links = "mylib"
 default-run = "main"
 
 [features]
+# List of default enabled features in the current crate; comment out to change
+# the behavior of '#[cfg(feature = "secret_of_life_known")]'
+default = ["secret_of_life_known"]
 secret_of_life_known = []
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
