@@ -7,8 +7,13 @@ pub fn main() {
     let mut c_flags = String::new();
 
     if let Ok(target) = std::env::var("TARGET") {
-        c_flags.push_str(format!("--target={} -fuse-ld=lld -g", target).as_str());
-
+        c_flags.push_str("-g --target=");
+        c_flags.push_str(target.as_str());
+        if let Ok(os) = std::env::var("CARGO_CFG_TARGET_OS") {
+            if os == "linux" {
+                c_flags.push_str("-fuse-ld=lld");
+            }
+        }
     }
 
     if let Ok(target_os) = std::env::var("CARGO_CFG_TARGET_OS") {
