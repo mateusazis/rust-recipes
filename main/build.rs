@@ -7,9 +7,8 @@ pub fn main() {
     let mut c_flags = String::new();
 
     if let Ok(target) = std::env::var("TARGET") {
-        if target.starts_with("aarch64-unknown-linux-") {
-            c_flags.push_str("--target=arm64v7a-linux-gnueabi -fuse-ld=lld -g");
-        }
+        c_flags.push_str(format!("--target={} -fuse-ld=lld -g", target).as_str());
+
     }
 
     if let Ok(target_os) = std::env::var("CARGO_CFG_TARGET_OS") {

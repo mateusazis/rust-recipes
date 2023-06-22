@@ -1,8 +1,8 @@
 #! /bin/bash
 set -e
 
-LD_LIBRARY_PATH=./src/util
-rm ./src/util/libmylib.so 2> /dev/null || true
-cargo build --target aarch64-unknown-linux-gnu
-file ./src/util/libmylib.so
-file ./target/aarch64-unknown-linux-gnu/debug/rust-recipes
+LD_LIBRARY_PATH=./main/src/util
+rm -f ./main/src/util/libmylib.so
+cargo +nightly build --target aarch64-unknown-linux-gnu
+file ./main/src/util/libmylib.so
+file ./target/aarch64-unknown-linux-gnu/debug/main

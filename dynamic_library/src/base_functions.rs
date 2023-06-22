@@ -9,13 +9,15 @@ pub extern "C" fn double_of(v: i32) -> i32 {
 pub extern "C" fn to_upper(letters: *mut libc::c_char) {
     let mut offset = 0;
     loop {
-        let letter = unsafe { *letters.offset(offset) } as u8 as char;
+        let letter = char::from(unsafe { *letters.offset(offset) } as u8);
         if letter == '\0' {
             break;
         }
         let upper = letter.to_ascii_uppercase();
+        let mut arr = [0u8; 1];
+        upper.encode_utf8(&mut arr);
         unsafe {
-            *letters.offset(offset) = upper as u8 as i8;
+            *letters.offset(offset) = arr[0] as libc::c_char;
         }
         offset += 1;
     }
@@ -46,11 +48,11 @@ pub extern "C" fn find_most_common_letter(
         .into_iter()
         .max_by(|(_, ocurrences1), (_, ocurrences2)| ocurrences1.cmp(ocurrences2))
         .map(|(letter, occurr)| FindMostCommonLetterResult {
-            letter: letter as u8 as i8,
+            letter: letter as u8 as libc::c_char,
             occurrences: occurr,
         })
         .unwrap_or(FindMostCommonLetterResult {
-            letter: 'a' as u8 as i8,
+            letter: 'a' as u8 as libc::c_char,
             occurrences: 0,
         })
 }

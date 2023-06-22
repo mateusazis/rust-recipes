@@ -42,5 +42,5 @@ fn main() {
         // return;
     }
 
-    util::conditional_compilation::main()
+    util::ffi::main()
 }
