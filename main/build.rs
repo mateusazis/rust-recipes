@@ -32,6 +32,7 @@ pub fn main() {
         println!("{}", line.unwrap());
     }
 
-    println!("cargo:rustc-link-search=./main/src/util");
+    let curr_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
+    println!("cargo:rustc-link-search={}/src/util", curr_dir);
     println!("cargo:rustc-link-lib=mylib");
 }
