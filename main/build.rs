@@ -16,9 +16,9 @@ pub fn main() {
         "macos" => c_flags.push_str(" -lSystem"),
         _ => {},
     };
-    
+
     cmd.env("CFLAGS", c_flags.as_str());
-    
+
 
     let output = cmd.output().expect("should have ran Make");
 
