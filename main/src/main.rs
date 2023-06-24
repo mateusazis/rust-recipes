@@ -42,5 +42,5 @@ fn main() {
         // return;
     }
 
-    util::ffi::main()
+    util::references::main()
 }
