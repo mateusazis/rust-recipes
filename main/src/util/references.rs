@@ -3,25 +3,18 @@ use std::vec::Vec;
 fn break_words(s: &str) -> Vec<&str> {
     let mut ret = Vec::<&str>::new();
     let mut start = 0usize;
-    let mut end = 1usize;
-    let mut chars = s.chars();
-    while start < s.len() && end < s.len() {
-        let c = chars.next().unwrap();
+
+    for (i, c) in s.char_indices() {
         if c.is_alphanumeric() {
-            end += 1;
             continue;
         }
-        if start == end - 1 {
-            start += 1;
-            end += 1;
-            continue;
+        if start != i {
+            ret.push(&s[start..i]);
         }
-        ret.push(&s[start..end - 1]);
-        start = end;
-        end = start + 1;
+        start = i + 1;
     }
-    if start < end {
-        ret.push(&s[start..end]);
+    if start < s.len() {
+        ret.push(&s[start..s.len()]);
     }
     ret
 }
