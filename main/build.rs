@@ -2,8 +2,13 @@ use std::io::BufRead;
 use std::path::Path;
 
 pub fn main() {
-    let mut cmd: std::process::Command = std::process::Command::new("make");
-    cmd.args(["-B", "libmylib.so"]).current_dir("./src/util");
+    let curr_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
+    let curr_dir = Path::new(&curr_dir);
+    let library_search_path = curr_dir.join("src/util");
+
+    let mut cmd = std::process::Command::new("make");
+    cmd.args(["-B", "libmylib.so"])
+        .current_dir(&library_search_path);
 
     let mut c_flags = String::new();
 
@@ -34,10 +39,6 @@ pub fn main() {
     for line in output.stdout.lines() {
         println!("{}", line.unwrap());
     }
-
-    let curr_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
-    let curr_dir = Path::new(curr_dir.as_str());
-    let library_search_path = curr_dir.join("src/util");
 
     println!(
         "cargo:rustc-link-search={}",
