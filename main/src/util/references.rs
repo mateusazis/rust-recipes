@@ -1,5 +1,9 @@
 use std::vec::Vec;
 
+fn str_as_ptr_u64(s: &str) -> u64 {
+    s.as_bytes().as_ptr() as u64
+}
+
 fn break_words(s: &str) -> Vec<&str> {
     let mut ret = Vec::<&str>::new();
     let mut start = 0usize;
@@ -25,6 +29,22 @@ pub fn main() {
     println!("Words: {:?}", words);
 
     assert_eq!(words, vec!["Hello", "world", "this", "is", "rust"]);
+
+    let sentence_addr = str_as_ptr_u64(sentence);
+    let all_addresses = words
+        .into_iter()
+        .map(|word| format!("0x{:x} ({})", str_as_ptr_u64(word), word))
+        .reduce(|mut a, b| {
+            a.push_str("\n");
+            a.push_str(b.as_str());
+            a
+        })
+        .unwrap();
+
+    println!(
+        "Sentence starts at:\n0x{:x}\nand the others at:\n{}",
+        sentence_addr, all_addresses
+    );
 }
 
 #[cfg(test)]
