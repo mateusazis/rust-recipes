@@ -1,4 +1,5 @@
 use std::io::BufRead;
+use std::path::Path;
 
 pub fn main() {
     let mut cmd: std::process::Command = std::process::Command::new("make");
@@ -14,18 +15,20 @@ pub fn main() {
     match os.as_str() {
         "linux" => c_flags.push_str(" -fuse-ld=lld"),
         "macos" => c_flags.push_str(" -lSystem"),
-        _ => {},
+        _ => {}
     };
 
     cmd.env("CFLAGS", c_flags.as_str());
-
 
     let output = cmd.output().expect("should have ran Make");
 
     let code = output.status.code().unwrap();
     if code != 0 {
         let s: std::vec::Vec<String> = output.stderr.lines().map(|line| line.unwrap()).collect();
-        panic!("make should have exited with 0, but was {}. Output:\n{:?}", code, s);
+        panic!(
+            "make should have exited with 0, but was {}. Output:\n{:?}",
+            code, s
+        );
     }
 
     for line in output.stdout.lines() {
@@ -33,6 +36,12 @@ pub fn main() {
     }
 
     let curr_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
-    println!("cargo:rustc-link-search={}/src/util", curr_dir);
+    let curr_dir = Path::new(curr_dir.as_str());
+    let library_search_path = curr_dir.join("src/util");
+
+    println!(
+        "cargo:rustc-link-search={}",
+        library_search_path.to_str().unwrap()
+    );
     println!("cargo:rustc-link-lib=mylib");
 }
