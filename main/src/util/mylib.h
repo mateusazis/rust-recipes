@@ -1,8 +1,8 @@
 #ifdef __cplusplus
 extern "C" {
-  #endif
+#endif
 
-int toUpper(char* input);
+int toUpper(char *input);
 
 typedef struct {
   char str[1024];

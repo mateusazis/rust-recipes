@@ -1,13 +1,13 @@
 #include "mylib.h"
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 static char toUpperChar(char c) {
-  return c >= 'a' && c <= 'z' ?  'A' + (c - 'a') : c;
+  return c >= 'a' && c <= 'z' ? 'A' + (c - 'a') : c;
 }
 
-int toUpper(char* input) {
-  char* start = input;
+int toUpper(char *input) {
+  char *start = input;
   char c;
   while (*input) {
     c = *input;
@@ -18,7 +18,7 @@ int toUpper(char* input) {
 }
 
 void toUpper2(const char *input, ResultString *result) {
-  memset(result->str, '\0', sizeof(result->str)/sizeof(char));
+  memset(result->str, '\0', sizeof(result->str) / sizeof(char));
   int i = 0;
   char c;
   while ((c = input[i]) != '\0') {
