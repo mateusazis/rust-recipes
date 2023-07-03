@@ -19,6 +19,7 @@ pub mod math;
 pub mod pinning;
 pub mod references;
 pub mod simd;
+pub mod slices;
 pub mod template_functions;
 pub mod threading;
 pub mod threading_shared_state;
