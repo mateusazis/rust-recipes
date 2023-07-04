@@ -1,14 +1,16 @@
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-int toUpper(char *input);
+  int __attribute__((pure)) toUpper(char *input);
 
-typedef struct {
-  char str[1024];
-} ResultString;
+  typedef struct
+  {
+    char str[1024];
+  } ResultString;
 
-void toUpper2(const char *input, ResultString *result);
+  void __attribute__((pure)) toUpper2(const char *input, ResultString *result);
 
 #ifdef __cplusplus
 }

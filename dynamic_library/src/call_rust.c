@@ -8,9 +8,9 @@ typedef struct
   int occurrences;
 } FindMostCommonLetterResult;
 
-extern int double_of(int) __attribute__((const));
+extern int __attribute__((const)) double_of(int);
 extern void to_upper(char *);
-extern FindMostCommonLetterResult find_most_common_letter(const char *) __attribute__((pure));
+extern FindMostCommonLetterResult __attribute__((pure)) find_most_common_letter(const char *);
 
 int main(int argc, char **argv)
 {

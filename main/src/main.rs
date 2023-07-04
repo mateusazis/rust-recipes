@@ -42,5 +42,5 @@ fn main() {
         // return;
     }
 
-    util::slices::main()
+    util::ffi::main()
 }
