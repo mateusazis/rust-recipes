@@ -31,12 +31,12 @@ pub struct FindMostCommonLetterResult {
 
 #[no_mangle]
 pub extern "C" fn find_most_common_letter(
-    letters: *mut libc::c_char,
+    letters: *const libc::c_char,
 ) -> FindMostCommonLetterResult {
     let mut occurrences = HashMap::new();
     let mut offset = 0;
     loop {
-        let letter = unsafe { *letters.offset(offset) } as u8 as char;
+        let letter = char::from(unsafe { *letters.offset(offset) } as u8);
         if letter == '\0' {
             break;
         }
