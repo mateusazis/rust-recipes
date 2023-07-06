@@ -33,7 +33,7 @@ pub fn main() {
     let len = result_struct
         .str
         .into_iter()
-        .position(|b| b == 0i8)
+        .position(|b| b == 0)
         .unwrap_or(0);
     let i8_slice = &result_struct.str[0..len];
     let u8_vec = i8_slice.into_iter().map(|c| *c as u8).collect();
