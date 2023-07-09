@@ -1,5 +1,6 @@
 #![feature(unix_socket_ancillary_data)]
 
+use another_library::err_with_backtrace::add_stack_trace;
 use std::error::Error;
 use std::fs::File;
 use std::io::IoSlice;
@@ -10,15 +11,16 @@ fn get_file_name() -> String {
     if std::env::args().len() >= 2 {
         return std::env::args().last().unwrap();
     }
-    String::from("/home/azis/windows_dev/rustplay/recipes/src/bin/lorem.txt")
+    String::from("/home/azis/windows_dev/rustplay/recipes2/src/bin/lorem.txt")
 }
 
 fn main_internal() -> Result<(), Box<dyn Error>> {
-    let f = File::open(get_file_name())?;
+    let f = add_stack_trace(File::open(get_file_name()))?;
     let path = "/tmp/my_unix_socket";
-    std::fs::remove_file(path)?;
+    // don´t care if this fails
+    add_stack_trace(std::fs::remove_file(path)).unwrap_or(());
 
-    let listener = UnixListener::bind(path)?;
+    let listener = add_stack_trace(UnixListener::bind(path))?;
     loop {
         println!("Waiting for client...");
         let (stream, _addr) = listener.accept()?;
@@ -29,7 +31,7 @@ fn main_internal() -> Result<(), Box<dyn Error>> {
         let mut anc = SocketAncillary::new(&mut buf2);
         anc.add_fds(&[f.as_raw_fd()]);
 
-        stream.send_vectored_with_ancillary(&msgs, &mut anc)?;
+        add_stack_trace(stream.send_vectored_with_ancillary(&msgs, &mut anc))?;
     }
 }
 
