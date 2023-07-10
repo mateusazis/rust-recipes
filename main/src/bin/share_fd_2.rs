@@ -1,6 +1,8 @@
 #![feature(unix_socket_ancillary_data)]
 
-use another_library::err_with_backtrace::add_stack_trace;
+pub mod other_bin_utils;
+
+use other_bin_utils::err_with_backtrace::add_stack_trace;
 use std::error::Error;
 use std::fs::File;
 use std::io::{stdin, BufRead, BufReader, IoSliceMut, Read, Seek};

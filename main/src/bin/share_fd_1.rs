@@ -1,6 +1,8 @@
 #![feature(unix_socket_ancillary_data)]
 
-use another_library::err_with_backtrace::add_stack_trace;
+pub mod other_bin_utils;
+
+use other_bin_utils::err_with_backtrace::add_stack_trace;
 use std::error::Error;
 use std::fs::File;
 use std::io::IoSlice;
@@ -25,13 +27,19 @@ fn main_internal() -> Result<(), Box<dyn Error>> {
         println!("Waiting for client...");
         let (stream, _addr) = listener.accept()?;
 
-        let buf1 = [0u8; 128];
-        let msgs = [IoSlice::new(&buf1); 1];
-        let mut buf2 = [0u8; 128];
-        let mut anc = SocketAncillary::new(&mut buf2);
-        anc.add_fds(&[f.as_raw_fd()]);
+        let data_buf: [u8; 1] = [0u8; 1];
+        let data_io_slice = IoSlice::new(&data_buf);
 
-        add_stack_trace(stream.send_vectored_with_ancillary(&msgs, &mut anc))?;
+        let mut ancillary_buf = [0u8; 128];
+        let mut anccillary = SocketAncillary::new(&mut ancillary_buf);
+        anccillary.add_fds(&[f.as_raw_fd()]);
+
+        add_stack_trace(
+            stream.send_vectored_with_ancillary(
+                std::slice::from_ref(&data_io_slice),
+                &mut anccillary,
+            ),
+        )?;
     }
 }
 
