@@ -3,6 +3,6 @@ set -e
 
 LD_LIBRARY_PATH=./main/src/util
 rm -f ./main/src/util/libmylib.so
-cargo build --target aarch64-unknown-linux-gnu
+cargo build --target aarch64-unknown-linux-gnu --bin main
 file ./main/src/util/libmylib.so
 file ./target/aarch64-unknown-linux-gnu/debug/main
