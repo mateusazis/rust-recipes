@@ -37,9 +37,9 @@ fn main_aarch64() {
 }
 
 fn main() {
-    if cfg!(target_arch = "aarch64") {
-        // main_aarch64();
-        // return;
+    if cfg!(target_arch = "aarch64") && cfg!(target_os = "linux") {
+        main_aarch64();
+        return;
     }
 
     util::ffi::main()

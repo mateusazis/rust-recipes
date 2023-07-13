@@ -3,9 +3,8 @@ set -e
 
 export LD_LIBRARY_PATH=./main/src/util
 export DYLD_FALLBACK_LIBRARY_PATH=./main/src/util
-cargo run $@
+cargo run $@ --bin main
 # cargo build $@
 # PID=$(pidof rust-recipes)
 # echo "Running under pid: $$"
 # exec ./target/debug/rust-recipes
-
