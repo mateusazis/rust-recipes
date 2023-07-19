@@ -7,7 +7,7 @@ struct MyString {
 
 impl MyString {
     fn new(s: &str) -> MyString {
-        let mut result = MyString {
+        let result = MyString {
             s: String::from(s),
             s_ptr: std::ptr::null(),
         };
