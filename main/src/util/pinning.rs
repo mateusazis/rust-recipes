@@ -21,16 +21,14 @@ impl MyString {
 
 impl Display for MyString {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        unsafe {
-            write!(
-                f,
-                "MyString: from value: '{}' (@0x{:x}), from ptr: '{}' (@0x{:x})",
-                self.s,
-                ((&self.s) as *const String) as u64,
-                *self.s_ptr,
-                self.s_ptr as u64,
-            )
-        }
+        write!(
+            f,
+            "MyString: from value: '{}' (@0x{:x}), from ptr: '{}' (@0x{:x})",
+            self.s,
+            ((&self.s) as *const String) as u64,
+            unsafe { (*self.s_ptr).as_str() },
+            self.s_ptr as u64,
+        )
     }
 }
 
