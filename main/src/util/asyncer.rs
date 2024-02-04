@@ -13,7 +13,19 @@ async fn read_file(path: &str, diff: &str) -> Result<(), async_std::io::Error> {
     let mut reader = async_std::io::BufReader::new(file);
     let mut buf = [0u8];
     while reader.read(&mut buf).await? > 0 {
-        println!("[{}] From file {}: {}", diff, path, buf[0]);
+        let thread = std::thread::current();
+        let thread_name = thread.name().unwrap();
+        let thread_id = thread.id();
+        let pid = std::process::id();
+        println!(
+            "[Diff: {} - Thread: {} (PID: {}, TID: {})] From file {}: {}",
+            diff,
+            thread_name,
+            pid,
+            thread_id.as_u64(),
+            path,
+            buf[0]
+        );
     }
     Ok(())
 }

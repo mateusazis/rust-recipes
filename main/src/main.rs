@@ -1,4 +1,4 @@
-#![feature(portable_simd)]
+#![feature(thread_id_value, portable_simd)]
 mod util;
 
 // Mac instructions: set DYLD_FALLBACK_LIBRARY_PATH
@@ -42,5 +42,5 @@ fn main() {
         return;
     }
 
-    util::pinning::main()
+    util::asyncer::main()
 }
