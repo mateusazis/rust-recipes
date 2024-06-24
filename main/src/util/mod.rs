@@ -13,6 +13,7 @@ pub mod ffi;
 pub mod generics;
 pub mod generics_vs_associated_types;
 pub mod glibc;
+pub mod hashes;
 pub mod inline_assembly;
 pub mod interfaces;
 pub mod manual_async;

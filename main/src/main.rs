@@ -42,5 +42,5 @@ fn main() {
         return;
     }
 
-    util::dynamic_dispatch::main()
+    util::hashes::main()
 }
