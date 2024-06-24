@@ -7,6 +7,7 @@ pub mod asyncer;
 pub mod cell;
 pub mod closures;
 pub mod conditional_compilation;
+pub mod dynamic_dispatch;
 pub mod errors;
 pub mod ffi;
 pub mod generics;

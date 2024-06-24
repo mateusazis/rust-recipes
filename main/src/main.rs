@@ -42,5 +42,5 @@ fn main() {
         return;
     }
 
-    util::asyncer::main()
+    util::dynamic_dispatch::main()
 }
