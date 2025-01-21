@@ -1,6 +1,6 @@
 [workspace]
 members = [
   "main",
-  "dynamic_library",
+  "dynamic_library", "rustasync",
 ]
 resolver = "2"
