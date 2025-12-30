@@ -1,11 +1,21 @@
 async fn double(n: i32) -> i32 {
+    println!(
+        "Making the double of: {} from thread {}",
+        n,
+        std::thread::current().name().unwrap()
+    );
+    tokio::time::sleep(std::time::Duration::from_secs(1)).await;
     n * 2
 }
 
 async fn sum_async() -> i32 {
-    let v1 = double(10);
-    let v2 = double(4);
-    v1.await + v2.await
+    println!("v1");
+    let v1 = tokio::task::spawn(async { double(10).await });
+    println!("v2");
+    let v2 = tokio::task::spawn(async { double(4).await });
+    let n1 = v1.await.unwrap();
+    let n2 = v2.await.unwrap();
+    n1 + n2
 }
 
 async fn main_async() {
@@ -25,8 +35,13 @@ async fn main_async() {
 // Also works
 
 fn main() {
-    tokio::runtime::Builder::new_current_thread()
-        .thread_name("foo_bar")
+    let thread_counter = std::sync::Arc::new(std::sync::Mutex::new(0));
+    tokio::runtime::Builder::new_multi_thread()
+        .thread_name_fn(move || {
+            let mut locked = thread_counter.lock().unwrap();
+            *locked = locked.clone() + 1;
+            format!("foo_bar_{}", locked)
+        })
         .enable_time()
         .build()
         .unwrap()
