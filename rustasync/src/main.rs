@@ -8,14 +8,27 @@ async fn double(n: i32) -> i32 {
     n * 2
 }
 
+fn double_blocking(n: i32) -> i32 {
+    println!(
+        "[Slow] Making the double of: {} from thread {}",
+        n,
+        std::thread::current().name().unwrap()
+    );
+    std::thread::sleep(std::time::Duration::from_secs(1));
+    n * 2
+}
+
 async fn sum_async() -> i32 {
     println!("v1");
     let v1 = tokio::task::spawn(async { double(10).await });
     println!("v2");
-    let v2 = tokio::task::spawn(async { double(4).await });
-    let n1 = v1.await.unwrap();
-    let n2 = v2.await.unwrap();
-    n1 + n2
+    let v2 = tokio::task::spawn(async { double(3).await });
+    println!("v3");
+    let v3 = tokio::task::spawn_blocking(|| double_blocking(1));
+
+    let futures = vec![v1, v2, v3];
+    let values = futures::future::join_all(futures).await;
+    values.into_iter().map(|i| i.unwrap()).sum()
 }
 
 async fn main_async() {
