@@ -35,12 +35,13 @@ async fn main_async() {
 // Also works
 
 fn main() {
-    let thread_counter = std::sync::Arc::new(std::sync::Mutex::new(0));
+    let thread_counter = std::sync::Mutex::new(0);
     tokio::runtime::Builder::new_multi_thread()
         .thread_name_fn(move || {
             let mut locked = thread_counter.lock().unwrap();
-            *locked = locked.clone() + 1;
-            format!("foo_bar_{}", locked)
+            let thread_number = locked.clone();
+            *locked += 1;
+            format!("foo_bar_{}", thread_number)
         })
         .enable_time()
         .build()
