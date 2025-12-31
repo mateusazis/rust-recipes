@@ -6,6 +6,7 @@ pub mod other_bin_utils;
 mod internal {
 
     use other_bin_utils::err_with_backtrace::add_stack_trace;
+    use std::error::Error;
     use std::fs::File;
     use std::io::IoSlice;
     use std::os::fd::AsRawFd;
