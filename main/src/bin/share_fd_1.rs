@@ -1,5 +1,6 @@
 #![cfg_attr(target_os = "linux", feature(unix_socket_ancillary_data))]
 
+#[cfg(target_os = "linux")]
 pub mod other_bin_utils;
 
 #[cfg(target_os = "linux")]

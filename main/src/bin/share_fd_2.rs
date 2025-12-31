@@ -1,5 +1,6 @@
 #![cfg_attr(target_os = "linux", feature(unix_socket_ancillary_data))]
 
+#[cfg(target_os = "linux")]
 pub mod other_bin_utils;
 
 #[cfg(target_os = "linux")]
@@ -39,7 +40,7 @@ mod internal {
             .collect()
     }
 
-    fn main_internal() -> Result<(), Box<dyn Error>> {
+    pub fn main_internal() -> Result<(), Box<dyn Error>> {
         println!("Connecting to stream...");
         let stream = add_stack_trace(UnixStream::connect("/tmp/my_unix_socket"))?;
         let mut buf1 = [0u8; 128];
