@@ -50,7 +50,17 @@ fn handle(holder: &Holder2) {
     unsafe {
         match holder {
             &Holder2 {
-                data: [0x41u8, 0x41u8, 0x41u8, 0x41u8, 0x41u8, 0x41u8, 0x41u8, 0x41u8],
+                data:
+                    [
+                        0x41u8,
+                        0x41u8,
+                        0x41u8,
+                        0x41u8,
+                        0x41u8,
+                        0x41u8,
+                        0x41u8,
+                        0x41u8,
+                    ],
             } => {
                 println!("Data case");
             }

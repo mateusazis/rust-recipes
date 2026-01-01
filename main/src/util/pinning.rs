@@ -15,7 +15,7 @@ impl MyString {
     }
 
     fn init_ptr(&mut self) {
-      self.s_ptr = &self.s;
+        self.s_ptr = &self.s;
     }
 }
 
@@ -46,7 +46,6 @@ pub fn main() {
 
     println!("Swapping...");
 
-
     std::mem::swap(&mut ms1, &mut ms2);
 
     println!("{}", ms1);
@@ -57,8 +56,8 @@ pub fn main() {
     assert_eq!(ms2.s, "test1");
 
     // succeeds... but should it?
-    assert_eq!(unsafe {(*ms1.s_ptr).as_str()}, "test1");
-    assert_eq!(unsafe {(*ms2.s_ptr).as_str()}, "test2");
+    assert_eq!(unsafe { (*ms1.s_ptr).as_str() }, "test1");
+    assert_eq!(unsafe { (*ms2.s_ptr).as_str() }, "test2");
     print_after_move(ms2);
 
     println!();
@@ -78,6 +77,6 @@ pub fn main() {
     println!("P1: {}", p1);
     println!("P2: {}", p2);
     print_after_move(p2);
-    assert_eq!(unsafe {(*p1.s_ptr).as_str()}, "test2");
-    assert_eq!(unsafe {(*p2.s_ptr).as_str()}, "test1");
+    assert_eq!(unsafe { (*p1.s_ptr).as_str() }, "test2");
+    assert_eq!(unsafe { (*p2.s_ptr).as_str() }, "test1");
 }

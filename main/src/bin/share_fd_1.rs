@@ -48,11 +48,11 @@ mod internal {
 
 #[cfg(not(target_os = "linux"))]
 mod internal {
-  use std::error::Error;
+    use std::error::Error;
 
-  pub fn main_internal() -> Result<(), Box<dyn Error>> {
-    Ok(())
-  }
+    pub fn main_internal() -> Result<(), Box<dyn Error>> {
+        Ok(())
+    }
 }
 
 fn main() {

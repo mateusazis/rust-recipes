@@ -9,7 +9,7 @@ mod internal {
     use crate::other_bin_utils::err_with_backtrace::add_stack_trace;
     use std::error::Error;
     use std::fs::File;
-    use std::io::{stdin, BufRead, BufReader, IoSliceMut, Read, Seek};
+    use std::io::{BufRead, BufReader, IoSliceMut, Read, Seek, stdin};
     use std::os::fd::{AsRawFd, FromRawFd, RawFd};
     use std::os::unix::net::{AncillaryData, SocketAncillary, UnixStream};
 

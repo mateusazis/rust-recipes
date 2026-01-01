@@ -1,13 +1,13 @@
 use crate::util::manual_async_futures::{delayed, run_blocking_task};
 
-use futures::future::{join, BoxFuture, FutureExt};
-use futures::task::{waker_ref, ArcWake};
+use futures::future::{BoxFuture, FutureExt, join};
+use futures::task::{ArcWake, waker_ref};
 use std::any::Any;
-use std::sync::mpsc::{sync_channel, SyncSender};
 use std::sync::Arc;
 use std::sync::Mutex;
+use std::sync::mpsc::{SyncSender, sync_channel};
 use std::task::{Context, Poll};
-use std::thread::{sleep, JoinHandle};
+use std::thread::{JoinHandle, sleep};
 use std::time::Duration;
 
 const DEFAULT_CHANNEL_SIZE: usize = 8096;

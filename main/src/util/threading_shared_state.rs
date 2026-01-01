@@ -13,10 +13,12 @@ impl Wrapper {
 
 fn make_thread(wrapper: Arc<RwLock<Wrapper>>, thread_name: &str) -> JoinHandle<()> {
     let thread_name = String::from(thread_name);
-    std::thread::spawn(move || loop {
-        wrapper.write().unwrap().inc();
-        println!("{}: {}", thread_name, wrapper.read().unwrap().0);
-        std::thread::sleep(std::time::Duration::from_millis(500));
+    std::thread::spawn(move || {
+        loop {
+            wrapper.write().unwrap().inc();
+            println!("{}: {}", thread_name, wrapper.read().unwrap().0);
+            std::thread::sleep(std::time::Duration::from_millis(500));
+        }
     })
 }
 
