@@ -1,8 +1,3 @@
-use core::fmt;
-use std::{str::FromStr, vec};
-
-use libc::sprintf;
-
 trait Stringer {
     fn make_str(&self) -> String;
 }

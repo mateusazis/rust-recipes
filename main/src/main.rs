@@ -9,7 +9,7 @@ struct RunOption<'a> {
 }
 
 impl<'a> RunOption<'a> {
-    fn new(name: &'a str, func: fn()) -> RunOption {
+    fn new(name: &'a str, func: fn()) -> RunOption<'a> {
         RunOption { name, func }
     }
 }

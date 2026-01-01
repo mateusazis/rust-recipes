@@ -109,7 +109,7 @@ fn do_blocking_work() -> i32 {
     }
     // std::thread::sleep(Duration::from_secs(15));
     a += 100;
-    println!("Post-sleep...");
+    println!("Post-sleep (count: {})...", count);
     a
 }
 
