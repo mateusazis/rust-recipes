@@ -10,7 +10,7 @@ extern "C"
     char str[1024];
   } ResultString;
 
-  void __attribute__((pure)) toUpper2(const char *input, ResultString *result);
+  void toUpper2(const char *input, ResultString *result);
 
 #ifdef __cplusplus
 }
