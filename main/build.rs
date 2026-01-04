@@ -30,8 +30,9 @@ pub fn main() {
     let code = output.status.code().unwrap();
     if code != 0 {
         let s: std::vec::Vec<String> = output.stderr.lines().map(|line| line.unwrap()).collect();
+        let s = s.join("\n");
         panic!(
-            "make should have exited with 0, but was {}. Output:\n{:?}",
+            "make should have exited with 0, but was {}. Output:\n\n{}\n\n",
             code, s
         );
     }
