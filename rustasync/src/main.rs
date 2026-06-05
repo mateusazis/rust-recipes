@@ -42,15 +42,15 @@ async fn main_async() {
 
 fn main() {
     let runtime1 = executor::Runtime::new(4);
-    let runtime2 = executor::Runtime::new(1);
-
     println!("--- Running on Runtime 1 (4 threads) ---");
     let res1 = runtime1.block_on(async {
-        main_async().await;
-        28
+      main_async().await;
+      28
     });
     assert_eq!(res1, 28);
+    std::mem::drop(runtime1);
 
+    let runtime2 = executor::Runtime::new(1);
     println!("\n--- Running on Runtime 2 (1 thread) ---");
     let res2 = runtime2.block_on(async {
         main_async().await;
