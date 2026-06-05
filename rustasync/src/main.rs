@@ -41,22 +41,22 @@ async fn main_async() {
 }
 
 fn main() {
-    let runtime1 = executor::Runtime::new();
-    let runtime2 = executor::Runtime::new();
+    let runtime1 = executor::Runtime::new(4);
+    let runtime2 = executor::Runtime::new(1);
 
-    println!("--- Running on Runtime 1 ---");
+    println!("--- Running on Runtime 1 (4 threads) ---");
     let res1 = runtime1.block_on(async {
         main_async().await;
         28
     });
+    assert_eq!(res1, 28);
 
-    println!("\n--- Running on Runtime 2 ---");
+    println!("\n--- Running on Runtime 2 (1 thread) ---");
     let res2 = runtime2.block_on(async {
         main_async().await;
         28
     });
 
-    assert_eq!(res1, 28);
     assert_eq!(res2, 28);
     println!("\nBoth runtimes ran successfully and returned correct results!");
 }
